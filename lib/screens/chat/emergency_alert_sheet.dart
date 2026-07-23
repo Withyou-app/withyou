@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 
@@ -106,23 +107,35 @@ class _EmergencyAlertContent extends StatelessWidget {
     );
   }
 
+  /// 탭하면 전화 앱으로 해당 번호를 건다.
   Widget _phoneCard(String label, String number) {
-    return AppCard(
-      color: AppColors.inputFill,
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: AppTextStyles.body)),
-          Text(
-            number,
-            style: const TextStyle(
-              fontFamily: AppFonts.cocochoitoon,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: AppColors.primary,
+    return InkWell(
+      onTap: () => _dial(number),
+      borderRadius: BorderRadius.circular(AppRadii.card),
+      child: AppCard(
+        color: AppColors.inputFill,
+        child: Row(
+          children: [
+            Expanded(child: Text(label, style: AppTextStyles.body)),
+            Text(
+              number,
+              style: const TextStyle(
+                fontFamily: AppFonts.cocochoitoon,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppColors.primary,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+            const Icon(Icons.call, size: 20, color: AppColors.primary),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _dial(String number) async {
+    final uri = Uri(scheme: 'tel', path: number);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }
