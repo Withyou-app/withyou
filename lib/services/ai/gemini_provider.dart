@@ -51,11 +51,17 @@ class GeminiProvider implements AiProvider {
       },
     };
 
-    final res = await _client.post(
-      _endpoint,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
-    );
+    final res = await _client
+        .post(
+          _endpoint,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(body),
+        )
+        // 망 지연 시 로딩이 무한정 돌지 않도록. 초과하면 상위에서 폴백 처리.
+        .timeout(
+          const Duration(seconds: 15),
+          onTimeout: () => throw AiException('응답이 지연되고 있어요'),
+        );
 
     if (res.statusCode != 200) {
       throw AiException('AI 응답 오류 (${res.statusCode})');
