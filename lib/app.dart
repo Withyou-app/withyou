@@ -13,6 +13,8 @@ import 'screens/onboarding/onboarding_step3_screen.dart';
 import 'screens/persona/persona_select_screen.dart';
 import 'screens/chat/chat_screen.dart';
 import 'screens/report/mind_report_screen.dart';
+import 'screens/gift/gift_detail_screen.dart';
+import 'screens/gift/received_gifts_screen.dart';
 import 'screens/support/contact_screen.dart';
 import 'screens/mypage/profile_edit_screen.dart';
 
@@ -51,6 +53,8 @@ class WithYouApp extends StatelessWidget {
         AppRoutes.persona: (_) => const PersonaSelectScreen(),
         AppRoutes.chat: (_) => const ChatScreen(),
         AppRoutes.reportDetail: (_) => const MindReportScreen(),
+        AppRoutes.giftDetail: (_) => const GiftDetailScreen(),
+        AppRoutes.receivedGifts: (_) => const ReceivedGiftsScreen(),
         AppRoutes.contact: (_) => const ContactScreen(),
         AppRoutes.profileEdit: (_) => const ProfileEditScreen(),
       },

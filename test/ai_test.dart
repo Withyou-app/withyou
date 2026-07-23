@@ -34,11 +34,11 @@ void main() {
     test('페르소나 이름과 프로필이 반영된다', () {
       final prompt = buildSystemPrompt(
         persona: '미리',
-        user: const AppUser(email: 'a@b.com', name: '다나', giftTaste: '향초'),
+        user: const AppUser(email: 'a@b.com', name: '다나', humor: '블랙코미디'),
       );
       expect(prompt, contains('미리'));
       expect(prompt, contains('다나'));
-      expect(prompt, contains('향초'));
+      expect(prompt, contains('블랙코미디'));
       expect(prompt, contains(kGiftMarker)); // 추천 마커 규칙 포함
     });
 

@@ -5,6 +5,7 @@ import 'services/auth_service.dart';
 import 'services/ai/ai_service.dart';
 import 'services/conversation_store.dart';
 import 'services/report_store.dart';
+import 'services/received_gift_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ Future<void> main() async {
   await AuthService.instance.init();
   await ConversationStore.instance.init(); // 진행 중 대화 복원(중간저장)
   await ReportStore.instance.init(); // 저장된 마음 리포트 복원
+  await ReceivedGiftStore.instance.init(); // 받은 선물 복원
   AiService.instance.init(); // AI 제공자 선택(.env 기반, 키 없으면 데모)
   runApp(const WithYouApp());
 }

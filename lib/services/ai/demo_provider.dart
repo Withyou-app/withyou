@@ -33,7 +33,7 @@ class DemoProvider implements AiProvider {
         '그랬구나, 속상했겠다. 나한테 더 얘기해도 괜찮아.',
         '오늘 정말 애썼어. 잠깐 숨 돌려도 돼, 내가 옆에 있을게.',
       ][variant];
-      final gift = const ['케이크', '향초', '꽃다발'][variant];
+      final gift = const ['따뜻한 코코아', '미니 꽃다발', '붕어빵'][variant];
       return AiReply(text: text, recommendGift: true, giftName: gift);
     }
 

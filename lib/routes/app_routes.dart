@@ -20,6 +20,8 @@ class AppRoutes {
   static const chat = '/chat';
   static const conversations = '/conversations';
   static const reportDetail = '/report/detail';
+  static const giftDetail = '/gift/detail';
+  static const receivedGifts = '/gift/received';
   static const contact = '/contact';
   static const profileEdit = '/profile/edit';
 }

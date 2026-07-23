@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/chat_message.dart';
+import '../../models/gift.dart';
 import '../../models/mind_report.dart';
 import '../../routes/app_routes.dart';
 import '../../services/ai/ai_service.dart';
@@ -133,9 +134,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       setState(() {
         _messages.add(ChatMessage.partner(reply.text, time: _now()));
         if (reply.recommendGift) {
+          // AI 추천명을 카탈로그 선물로 매칭(없으면 기본값) → 칩이 상세로 이동.
+          final gift = giftByName(reply.giftName) ?? kGifts.first;
           _messages.add(ChatMessage.partner(
-            _giftLabel(reply.giftName),
+            _giftLabel(gift.name),
             giftRecommendation: true,
+            giftId: gift.id,
           ));
         }
       });
@@ -279,8 +283,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (m.giftRecommendation) {
       return _GiftRecommendChip(
         label: m.text,
-        // 선물 탭으로 이동(선물 상세/구매 페이지는 재작업 예정).
-        onTap: () => _leaveToTab(ShellNav.giftTab),
+        // 추천한 그 선물의 상세로 바로 이동.
+        onTap: () {
+          final gift = m.giftId != null ? giftById(m.giftId!) : null;
+          Navigator.pushNamed(context, AppRoutes.giftDetail,
+              arguments: gift ?? kGifts.first);
+        },
       );
     }
     if (m.isMe) return ChatBubble.sent(m.text, time: m.time);

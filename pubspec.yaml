@@ -65,6 +65,7 @@ flutter:
     - assets/social/
     - assets/icons/
     - assets/personas/
+    - assets/gifts/
     - .env
 
   fonts:

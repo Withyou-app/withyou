@@ -1,4 +1,5 @@
 import '../../models/app_user.dart';
+import '../../models/gift.dart';
 
 /// AI가 '선물 추천'을 원할 때 응답 맨 끝에 붙이는 마커.
 /// (표시에는 노출하지 않고 [AiService]가 파싱해 신호로 바꾼다)
@@ -37,8 +38,9 @@ String buildSystemPrompt({required String persona, AppUser? user}) {
 [선물 추천 신호]
 - 대화에서 상대가 많이 지치거나 속상해 보여서 작은 선물이 위로가 되겠다고 판단되면,
   답변 맨 마지막 줄에 정확히 "$kGiftMarker:선물이름" 형식으로 덧붙인다.
-  예: "$kGiftMarker:케이크"  또는  "$kGiftMarker:향초"
-- 선물은 대화 맥락과 상대의 상태에 어울리는 구체적인 물건 하나로 고른다.
+  예: "$kGiftMarker:따뜻한 코코아"
+- 선물은 반드시 아래 목록 중 대화 맥락에 가장 어울리는 하나를 그대로 고른다:
+  ${kGifts.map((g) => g.name).join(', ')}
 - 남발하지 말고, 정말 위로가 필요한 순간에만 신호를 낸다. 평소 대화에는 붙이지 않는다.
 ${profile.isEmpty ? '' : '\n[상대 프로필]\n$profile'}
 ''';

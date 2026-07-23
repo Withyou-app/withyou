@@ -7,12 +7,14 @@ enum ChatSender { me, partner }
 class ChatMessage {
   const ChatMessage.me(this.text, {this.time})
       : sender = ChatSender.me,
-        giftRecommendation = false;
+        giftRecommendation = false,
+        giftId = null;
 
   const ChatMessage.partner(
     this.text, {
     this.time,
     this.giftRecommendation = false,
+    this.giftId,
   }) : sender = ChatSender.partner;
 
   const ChatMessage._({
@@ -20,12 +22,14 @@ class ChatMessage {
     required this.text,
     this.time,
     this.giftRecommendation = false,
+    this.giftId,
   });
 
   final ChatSender sender;
   final String text;
   final String? time;
   final bool giftRecommendation;
+  final String? giftId; // 선물 추천 칩이 가리키는 카탈로그 선물 id
 
   bool get isMe => sender == ChatSender.me;
 
@@ -34,6 +38,7 @@ class ChatMessage {
         'text': text,
         if (time != null) 'time': time,
         if (giftRecommendation) 'gift': true,
+        if (giftId != null) 'giftId': giftId,
       };
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage._(
@@ -41,5 +46,6 @@ class ChatMessage {
         text: json['text'] as String? ?? '',
         time: json['time'] as String?,
         giftRecommendation: json['gift'] == true,
+        giftId: json['giftId'] as String?,
       );
 }
