@@ -95,6 +95,11 @@ class _MindReportScreenState extends State<MindReportScreen> {
             children: [
               AppGaps.v8,
               const BackHeader(title: '마음 리포트'),
+              if ((report?.createdAt ?? '').isNotEmpty) ...[
+                AppGaps.v8,
+                Text(_prettyDate(report!.createdAt),
+                    style: AppTextStyles.caption),
+              ],
               AppGaps.v24,
               Expanded(
                 child: SingleChildScrollView(
@@ -147,6 +152,16 @@ class _MindReportScreenState extends State<MindReportScreen> {
         ),
       ),
     );
+  }
+
+  /// createdAt('2026-07-22 13:05')을 '2026년 7월 22일 13:05'로 표시.
+  /// 형식이 예상과 다르면 원본을 그대로 보여준다.
+  String _prettyDate(String raw) {
+    final dt = DateTime.tryParse(raw.replaceFirst(' ', 'T'));
+    if (dt == null) return raw;
+    final hh = dt.hour.toString().padLeft(2, '0');
+    final mm = dt.minute.toString().padLeft(2, '0');
+    return '${dt.year}년 ${dt.month}월 ${dt.day}일 $hh:$mm';
   }
 
   /// 제목 + 내용 섹션(내용이 있을 때만 렌더).
