@@ -82,9 +82,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
     final info = <(String, String)>[
       ('자기소개', user?.bio ?? ''),
       ('유머 취향', user?.humor ?? ''),
-      ('선물 취향', user?.giftTaste ?? ''),
-      ('알레르기', user?.allergy ?? ''),
-      ('선호하는 향', user?.scent ?? ''),
     ];
 
     return Scaffold(
