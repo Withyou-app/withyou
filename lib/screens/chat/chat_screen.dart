@@ -192,7 +192,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       title: '대화를 종료할까요?',
       message: '지금까지 나눈 대화로 마음 리포트를 만들어드려요.',
       cancelLabel: '더 대화하기',
-      confirmLabel: '종료하고 리포트 보기',
+      confirmLabel: '리포트 보기',
     );
     if (end != true || !mounted) return;
 
