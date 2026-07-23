@@ -4,6 +4,7 @@ import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
 import '../../services/auth_service.dart';
+import '../../services/conversation_store.dart';
 
 /// 마이페이지 — 탭 화면. 하단 네비는 상위 셸이 담당하므로 넣지 않는다.
 class MyPageScreen extends StatefulWidget {
@@ -64,6 +65,133 @@ class _MyPageScreenState extends State<MyPageScreen> {
   }
 
   void _openContact() => Navigator.pushNamed(context, AppRoutes.contact);
+
+  /// 페르소나별 저장 메모리 카드.
+  Widget _memoryCard(String persona) {
+    final preview =
+        ConversationStore.instance.lastPreview(persona) ?? '기억을 쌓아가는 중이에요';
+    return AppCard(
+      onTap: () => _showMemory(persona),
+      child: Row(
+        children: [
+          AppAvatar(size: 44, name: persona),
+          const SizedBox(width: AppGaps.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('$persona의 기억', style: AppTextStyles.cardTitle),
+                const SizedBox(height: 4),
+                Text(preview,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.cardBody),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right, color: AppColors.textHint),
+        ],
+      ),
+    );
+  }
+
+  /// 이 친구가 기억하고 있는 정보를 하단 시트로 보여준다.
+  /// (프롬프트에 반영되는 프로필 + 최근 대화 기반, 대화할수록 갱신)
+  void _showMemory(String persona) {
+    final user = AuthService.instance.currentUser;
+    final facts = <(String, String)>[
+      if (user != null && user.name.isNotEmpty) ('호칭', user.name),
+      if ((user?.bio ?? '').isNotEmpty) ('자기소개', user!.bio),
+      if ((user?.humor ?? '').isNotEmpty) ('유머 취향', user!.humor),
+    ];
+    final messages = ConversationStore.instance.messagesOf(persona);
+    final recentMine = messages
+        .where((m) => m.isMe)
+        .toList()
+        .reversed
+        .take(3)
+        .toList()
+        .reversed
+        .toList();
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.background,
+      isScrollControlled: true,
+      barrierColor: AppColors.scrim,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppRadii.modal)),
+      ),
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(ctx).size.height * 0.8,
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(
+                AppGaps.screenH, AppGaps.lg, AppGaps.screenH, AppGaps.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    AppAvatar(size: 44, name: persona),
+                    const SizedBox(width: AppGaps.sm),
+                    Text('$persona이(가) 기억하는 것',
+                        style: AppTextStyles.cardTitle),
+                  ],
+                ),
+                AppGaps.v20,
+                const Text('나에 대해', style: AppTextStyles.label),
+                AppGaps.v8,
+                if (facts.isEmpty)
+                  const Text('아직 기억한 정보가 많지 않아요', style: AppTextStyles.body)
+                else
+                  for (final f in facts) ...[
+                    _memoryRow(f.$1, f.$2),
+                    AppGaps.v8,
+                  ],
+                AppGaps.v12,
+                const Text('최근 대화에서', style: AppTextStyles.label),
+                AppGaps.v8,
+                if (recentMine.isEmpty)
+                  const Text('대화를 나누면 여기에 쌓여요', style: AppTextStyles.body)
+                else
+                  for (final m in recentMine) ...[
+                    Text('· ${m.text}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body),
+                    AppGaps.v8,
+                  ],
+                AppGaps.v16,
+                Text('$persona와 대화를 나눌수록 이 기억은 계속 업데이트돼요.',
+                    style: AppTextStyles.caption),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _memoryRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+            width: 72,
+            child: Text(label,
+                style: AppTextStyles.body
+                    .copyWith(color: AppColors.textSecondary))),
+        const SizedBox(width: 8),
+        Expanded(child: Text(value, style: AppTextStyles.body)),
+      ],
+    );
+  }
 
   Future<void> _logout() async {
     await AuthService.instance.logOut();
@@ -136,16 +264,32 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 ),
               ),
               AppGaps.v24,
-              // 저장 메모리
+              // 저장 메모리 — 페르소나별로 나눈 대화를 바탕으로 기억이 쌓인다.
               const Text('저장 메모리', style: AppTextStyles.label),
               AppGaps.v8,
-              const Text('2개의 기억을 저장하고 있습니다', style: AppTextStyles.body),
-              AppGaps.v16,
-              const AppCard(
-                  child: Text('Session #1  (구나)', style: AppTextStyles.body)),
-              AppGaps.v12,
-              const AppCard(
-                  child: Text('Session #2  (라미)', style: AppTextStyles.body)),
+              AnimatedBuilder(
+                animation: ConversationStore.instance,
+                builder: (context, _) {
+                  final personas =
+                      ConversationStore.instance.personasWithHistory;
+                  if (personas.isEmpty) {
+                    return const Text('아직 저장된 기억이 없어요',
+                        style: AppTextStyles.body);
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${personas.length}명의 친구가 기억을 저장하고 있어요',
+                          style: AppTextStyles.body),
+                      AppGaps.v16,
+                      for (var i = 0; i < personas.length; i++) ...[
+                        if (i > 0) AppGaps.v12,
+                        _memoryCard(personas[i]),
+                      ],
+                    ],
+                  );
+                },
+              ),
               AppGaps.v24,
               // 동의 내역 — 각 항목 글자를 누르면 하단에서 약관 본문이 올라온다.
               const Text('동의 내역', style: AppTextStyles.label),
