@@ -40,9 +40,13 @@ class ConversationStore extends ChangeNotifier {
 
   /// 최근 대화 목록에 쓸 페르소나들 — 사용자가 실제로 메시지를 보낸 대화만.
   /// (인사말만 있고 대화를 진행하지 않은 건 기록/표시하지 않는다)
+  /// 최근에 활동한 대화가 앞에 오도록 역순으로 반환한다.
+  /// (setMessages 가 갱신된 대화를 맵의 끝으로 옮기므로, 뒤에서부터가 최신)
   List<String> get personasWithHistory => _byPersona.entries
       .where((e) => e.value.any((m) => m.isMe))
       .map((e) => e.key)
+      .toList()
+      .reversed
       .toList();
 
   List<ChatMessage> messagesOf(String persona) =>
@@ -61,7 +65,9 @@ class ConversationStore extends ChangeNotifier {
   }
 
   /// 대화 전체를 저장(메시지가 추가/변경될 때마다 호출).
+  /// 갱신된 대화를 맵의 끝으로 다시 넣어 '최근 활동' 순서를 유지한다.
   Future<void> setMessages(String persona, List<ChatMessage> messages) async {
+    _byPersona.remove(persona);
     _byPersona[persona] = List.of(messages);
     notifyListeners();
     await _persist();
