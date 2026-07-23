@@ -118,6 +118,11 @@ class _MindReportScreenState extends State<MindReportScreen> {
                         child: Text(summary,
                             style: AppTextStyles.body.copyWith(height: 1.5)),
                       ),
+                      // AI 제안 섹션(값이 있을 때만).
+                      _section('💛 지금 필요한 것', report?.needNow),
+                      _section('🌱 작은 행동 제안', report?.smallAction),
+                      _section('🎯 추천 미션', report?.mission),
+                      _caution(report?.caution ?? MindReport.kDefaultCaution),
                       AppGaps.v24,
                       const Text('나는 오늘 이런 하루였어',
                           style: AppTextStyles.label),
@@ -140,6 +145,43 @@ class _MindReportScreenState extends State<MindReportScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// 제목 + 내용 섹션(내용이 있을 때만 렌더).
+  Widget _section(String title, String? body) {
+    if (body == null || body.trim().isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: AppTextStyles.label),
+          AppGaps.v8,
+          Text(body, style: AppTextStyles.body.copyWith(height: 1.4)),
+        ],
+      ),
+    );
+  }
+
+  /// 주의 문구(의료행위 오인 방지).
+  Widget _caution(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(Icons.info_outline, size: 16, color: AppColors.textHint),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(text,
+                style: AppTextStyles.caption.copyWith(height: 1.4)),
+          ),
+        ],
       ),
     );
   }

@@ -83,8 +83,11 @@ class AiService {
         if (parsed != null) {
           return MindReport(
             persona: persona,
-            emotions: parsed.$1,
-            summary: parsed.$2,
+            emotions: (parsed['emotions'] as List).cast<String>(),
+            summary: parsed['summary'] as String,
+            needNow: parsed['needNow'] as String,
+            smallAction: parsed['smallAction'] as String,
+            mission: parsed['mission'] as String,
             createdAt: createdAt,
           );
         }
@@ -95,17 +98,24 @@ class AiService {
     return _demoReport(persona, history, createdAt);
   }
 
-  /// 모델 텍스트에서 JSON 을 추출해 (감정목록, 요약) 으로 파싱. 실패 시 null.
-  (List<String>, String)? _tryParseReport(String text) {
+  /// 모델 텍스트에서 JSON 을 추출해 리포트 필드로 파싱. 실패 시 null.
+  Map<String, dynamic>? _tryParseReport(String text) {
     final start = text.indexOf('{');
     final end = text.lastIndexOf('}');
     if (start < 0 || end <= start) return null;
     try {
-      final map = jsonDecode(text.substring(start, end + 1)) as Map<String, dynamic>;
+      final map =
+          jsonDecode(text.substring(start, end + 1)) as Map<String, dynamic>;
       final emotions = (map['emotions'] as List?)?.cast<String>() ?? const [];
       final summary = (map['summary'] as String?)?.trim() ?? '';
       if (emotions.isEmpty && summary.isEmpty) return null;
-      return (emotions.take(3).toList(), summary);
+      return {
+        'emotions': emotions.take(3).toList(),
+        'summary': summary,
+        'needNow': (map['needNow'] as String?)?.trim() ?? '',
+        'smallAction': (map['smallAction'] as String?)?.trim() ?? '',
+        'mission': (map['mission'] as String?)?.trim() ?? '',
+      };
     } catch (_) {
       return null;
     }
@@ -124,6 +134,9 @@ class AiService {
       summary: isSad
           ? '오늘은 마음이 조금 지치고 속상했던 하루였어요. $persona와 그 마음을 나눴어요.'
           : '$persona와 오늘 하루의 이야기를 편안하게 나눴어요.',
+      needNow: isSad ? '잠시 나를 다독여줄 휴식이 필요해 보여요.' : '지금의 편안함을 이어가면 좋겠어요.',
+      smallAction: isSad ? '따뜻한 물 한 잔 마시고 크게 숨을 내쉬어 보세요.' : '오늘 기분 좋았던 순간 하나를 떠올려 보세요.',
+      mission: isSad ? '자기 전에 오늘 나에게 수고했다고 한마디 건네보기.' : '내일 하고 싶은 작은 일 하나 적어보기.',
       createdAt: createdAt,
     );
   }
