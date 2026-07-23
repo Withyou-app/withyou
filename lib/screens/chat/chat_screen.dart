@@ -7,6 +7,8 @@ import '../../services/ai/ai_service.dart';
 import '../../services/ai/ai_types.dart';
 import '../../services/auth_service.dart';
 import '../../services/conversation_store.dart';
+import '../../services/safety_service.dart';
+import '../../services/safety_log_store.dart';
 import '../../services/shell_nav.dart';
 import '../../utils/korean.dart';
 import '../../theme/theme.dart';
@@ -118,21 +120,43 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     final text = _inputController.text.trim();
     if (text.isEmpty || _sending) return;
 
+    // 안전장치: 위험 발화 감지(§1~§3)
+    final risk = SafetyService.classify(text);
+
     setState(() {
       _messages.add(ChatMessage.me(text, time: _now()));
-      _sending = true;
+      _sending = risk != SafetyLevel.high; // High면 AI 답변 생성 안 함
     });
     _inputController.clear();
     _persist();
     _inputFocus.requestFocus(); // 키보드 유지
     _scrollToBottom();
 
+    // High: 일반 대화 중단 → 안전 안내 화면으로 전환.
+    if (risk == SafetyLevel.high) {
+      await SafetyLogStore.instance.log(SafetyLevel.high, '안전 안내 화면 전환');
+      if (!mounted) return;
+      setState(() {
+        _messages.add(ChatMessage.partner(
+          '지금 많이 힘들어 보여요. 우선 안전이 가장 중요하니, 잠깐 안내를 함께 볼게요.',
+          time: _now(),
+        ));
+      });
+      _persist();
+      _scrollToBottom();
+      showEmergencyAlert(context);
+      return;
+    }
+
     try {
       final reply = await AiService.instance
           .reply(persona: _name, history: _buildHistory());
       if (!mounted) return;
       setState(() {
-        _messages.add(ChatMessage.partner(reply.text, time: _now()));
+        // Medium: 답변 하단에 안전 안내 1문장 추가.
+        final replyText =
+            risk == SafetyLevel.medium ? reply.text + SafetyService.mediumNotice : reply.text;
+        _messages.add(ChatMessage.partner(replyText, time: _now()));
         if (reply.recommendGift) {
           // AI 추천명을 카탈로그 선물로 매칭(없으면 기본값) → 칩이 상세로 이동.
           final gift = giftByName(reply.giftName) ?? kGifts.first;
@@ -143,6 +167,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           ));
         }
       });
+      if (risk == SafetyLevel.medium) {
+        await SafetyLogStore.instance.log(SafetyLevel.medium, '안내 문구 추가');
+      }
     } catch (_) {
       if (!mounted) return;
       setState(() {
