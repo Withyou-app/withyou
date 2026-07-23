@@ -51,7 +51,6 @@ void main() {
     'reportList': const ReportListScreen(),
     'mindReport': const MindReportScreen(),
     'giftMain': const GiftMainScreen(),
-    'giftMainDone': const GiftMainScreen(completed: true),
     'mypage': const MyPageScreen(),
     'contact': const ContactScreen(),
   };
@@ -67,11 +66,10 @@ void main() {
     expect(find.byType(SocialLoginButton), findsNWidgets(3));
   });
 
-  testWidgets('선물 메인 두 상태의 문구가 시안과 일치한다', (tester) async {
+  testWidgets('선물 메인에 추천 목록 제목과 받은 선물 진입이 있다', (tester) async {
     await _pump(tester, const GiftMainScreen());
-    expect(find.text('선물까지 이정도 남았어요!'), findsOneWidget);
-    await _pump(tester, const GiftMainScreen(completed: true));
-    expect(find.text('선물을 받으러 가실까요?'), findsOneWidget);
+    expect(find.text('추천하는 선물들이에요'), findsOneWidget);
+    expect(find.text('받은 선물'), findsOneWidget);
   });
 
   testWidgets('대화창은 전달된 상대 이름을 반영한다 (미리 → 미리 대화창)', (tester) async {
