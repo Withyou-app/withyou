@@ -21,15 +21,22 @@ class SupabaseService {
   Future<void> init() async {
     final backend = (_env('BACKEND') ?? 'local').trim();
     final url = (_env('SUPABASE_URL') ?? '').trim();
-    final anonKey = (_env('SUPABASE_ANON_KEY') ?? '').trim();
-    if (backend != 'supabase' || url.isEmpty || anonKey.isEmpty) {
+    // 구형 anon(JWT) 또는 신형 publishable(sb_publishable_...) 키 모두 지원.
+    final key =
+        (_env('SUPABASE_ANON_KEY') ?? _env('SUPABASE_PUBLISHABLE_KEY') ?? '')
+            .trim();
+    if (backend != 'supabase' || url.isEmpty || key.isEmpty) {
       return; // 로컬 모드 유지.
     }
     try {
-      // anon public key 를 그대로 사용(대시보드에서 복사하는 값). 신형 명칭
-      // publishableKey 로의 전환은 후속 과제.
-      // ignore: deprecated_member_use
-      await Supabase.initialize(url: url, anonKey: anonKey);
+      if (key.startsWith('sb_')) {
+        // 신형 publishable/secret 키.
+        await Supabase.initialize(url: url, publishableKey: key);
+      } else {
+        // 구형 anon public key(JWT).
+        // ignore: deprecated_member_use
+        await Supabase.initialize(url: url, anonKey: key);
+      }
       _enabled = true;
     } catch (_) {
       _enabled = false; // 초기화 실패 시 안전하게 로컬로 폴백.
