@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app.dart';
 import 'services/auth_service.dart';
 import 'services/ai/ai_service.dart';
+import 'services/backend/supabase_service.dart';
 import 'services/conversation_store.dart';
 import 'services/report_store.dart';
 import 'services/received_gift_store.dart';
@@ -14,6 +15,8 @@ Future<void> main() async {
   try {
     await dotenv.load(fileName: '.env');
   } catch (_) {}
+  // 실서버(Supabase) 연결 — .env 에 설정이 있으면 켜지고, 없으면 로컬로 동작.
+  await SupabaseService.instance.init();
   await AuthService.instance.init();
   await ConversationStore.instance.init(); // 진행 중 대화 복원(중간저장)
   await ReportStore.instance.init(); // 저장된 마음 리포트 복원

@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/chat_message.dart';
+import 'backend/cloud_kv.dart';
 
 /// 진행 중인 대화를 페르소나별로 보관/영속화한다. (중간저장 → 이어하기)
 ///
@@ -19,15 +21,18 @@ class ConversationStore extends ChangeNotifier {
   /// 앱 시작 시 1회.
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    // 1) 로컬 복원.
     final raw = _prefs!.getString(_kConversations);
-    if (raw == null || raw.isEmpty) return;
-    final decoded = jsonDecode(raw) as Map<String, dynamic>;
-    decoded.forEach((persona, list) {
-      _byPersona[persona] = (list as List)
-          .map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
-          .toList();
-    });
-    // 마이그레이션: 인사말만 있고 진행 안 한 대화는 정리(기록하지 않음).
+    if (raw != null && raw.isNotEmpty) {
+      _decodeInto(jsonDecode(raw) as Map<String, dynamic>);
+    }
+    // 2) 실서버가 켜져 있고 값이 있으면 서버 값을 우선 반영(기기 간 이어보기).
+    final remote = await CloudKV.get(_kConversations);
+    if (remote is Map<String, dynamic>) {
+      _byPersona.clear();
+      _decodeInto(remote);
+    }
+    // 3) 인사말만 있고 진행 안 한 대화는 정리(기록하지 않음).
     final orphans =
         _byPersona.keys.where((p) => !_byPersona[p]!.any((m) => m.isMe)).toList();
     if (orphans.isNotEmpty) {
@@ -36,6 +41,14 @@ class ConversationStore extends ChangeNotifier {
       }
       await _persist();
     }
+  }
+
+  void _decodeInto(Map<String, dynamic> decoded) {
+    decoded.forEach((persona, list) {
+      _byPersona[persona] = (list as List)
+          .map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
+          .toList();
+    });
   }
 
   /// 최근 대화 목록에 쓸 페르소나들 — 사용자가 실제로 메시지를 보낸 대화만.
@@ -86,5 +99,7 @@ class ConversationStore extends ChangeNotifier {
       (persona, msgs) => MapEntry(persona, msgs.map((m) => m.toJson()).toList()),
     );
     await _prefs!.setString(_kConversations, jsonEncode(map));
+    // 실서버 백업(켜져 있을 때만, 실패해도 로컬 흐름은 유지).
+    unawaited(CloudKV.set(_kConversations, map));
   }
 }
