@@ -4,8 +4,10 @@ import '../../models/mind_report.dart';
 import '../auth_service.dart';
 import 'ai_personas.dart';
 import 'ai_types.dart';
+import 'claude_provider.dart';
 import 'demo_provider.dart';
 import 'gemini_provider.dart';
+import 'openai_provider.dart';
 
 /// AI 대화의 단일 진입점. 화면은 이 서비스만 알면 되고, 실제 제공자
 /// (Gemini/Claude/데모)는 여기서 .env 설정에 따라 선택한다.
@@ -39,8 +41,22 @@ class AiService {
           apiKey: key,
           model: (dotenv.maybeGet('GEMINI_MODEL') ?? 'gemini-2.5-flash').trim(),
         );
-      // TODO(claude): AI_PROVIDER=claude + ANTHROPIC_API_KEY 준비되면
-      //   case 'claude': return ClaudeProvider(...);
+      case 'openai':
+      case 'gpt':
+        final key = (dotenv.maybeGet('OPENAI_API_KEY') ?? '').trim();
+        if (key.isEmpty) return DemoProvider();
+        return OpenAiProvider(
+          apiKey: key,
+          model: (dotenv.maybeGet('OPENAI_MODEL') ?? 'gpt-4o-mini').trim(),
+        );
+      case 'claude':
+      case 'anthropic':
+        final key = (dotenv.maybeGet('ANTHROPIC_API_KEY') ?? '').trim();
+        if (key.isEmpty) return DemoProvider();
+        return ClaudeProvider(
+          apiKey: key,
+          model: (dotenv.maybeGet('ANTHROPIC_MODEL') ?? 'claude-sonnet-5').trim(),
+        );
       default:
         return DemoProvider();
     }
