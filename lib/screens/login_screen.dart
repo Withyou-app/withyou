@@ -72,18 +72,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 40),
-                  // 브랜드 타이틀
-                  const Text(
-                    'withyou+',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
+                  const SizedBox(height: 32),
+                  // 브랜드 로고(조각 하트 + with you 워드마크)
+                  Image.asset(
+                    'assets/brand/logo.png',
+                    height: 220,
+                    fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
                   const Text(
                     '당신만의 AI 감정친구',
                     textAlign: TextAlign.center,
@@ -93,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 40),
 
                   // 이메일
                   _label('이메일'),
