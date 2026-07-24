@@ -62,7 +62,7 @@ class _RecentConversationsScreenState
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppGaps.v8,
+                AppGaps.v16,
                 _header(personas.isNotEmpty),
                 AppGaps.v16,
                 Expanded(

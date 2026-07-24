@@ -59,3 +59,10 @@ create trigger trg_profiles_touch before update on public.profiles
 drop trigger if exists trg_user_state_touch on public.user_state;
 create trigger trg_user_state_touch before update on public.user_state
   for each row execute function public.touch_updated_at();
+
+-- 4) 역할 권한(GRANT) --------------------------------------------------------
+-- RLS 정책만으로는 부족하고, 로그인 사용자(authenticated)가 테이블에 접근하려면
+-- 테이블 레벨 권한이 필요하다. (행 단위 제한은 위의 RLS 정책이 담당)
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on public.profiles   to authenticated;
+grant select, insert, update, delete on public.user_state to authenticated;
