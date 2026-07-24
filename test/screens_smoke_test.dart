@@ -10,7 +10,6 @@ import 'package:withyou/screens/auth/signup_email_screen.dart';
 import 'package:withyou/screens/auth/signup_password_screen.dart';
 import 'package:withyou/screens/onboarding/onboarding_step1_screen.dart';
 import 'package:withyou/screens/onboarding/onboarding_step2_screen.dart';
-import 'package:withyou/screens/onboarding/onboarding_step3_screen.dart';
 import 'package:withyou/screens/persona/persona_select_screen.dart';
 import 'package:withyou/screens/chat/chat_screen.dart';
 import 'package:withyou/screens/conversations/recent_conversations_screen.dart';
@@ -43,7 +42,6 @@ void main() {
     'signupPassword': const SignupPasswordScreen(),
     'onboarding1': const OnboardingStep1Screen(),
     'onboarding2': const OnboardingStep2Screen(),
-    'onboarding3': const OnboardingStep3Screen(),
     'shell': const MainShell(),
     'persona': const PersonaSelectScreen(),
     'chat': const ChatScreen(),

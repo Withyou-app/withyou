@@ -9,7 +9,6 @@ import 'screens/auth/signup_password_screen.dart';
 import 'screens/auth/signup_terms_screen.dart';
 import 'screens/onboarding/onboarding_step1_screen.dart';
 import 'screens/onboarding/onboarding_step2_screen.dart';
-import 'screens/onboarding/onboarding_step3_screen.dart';
 import 'screens/persona/persona_select_screen.dart';
 import 'screens/chat/chat_screen.dart';
 import 'screens/report/mind_report_screen.dart';
@@ -46,7 +45,6 @@ class WithYouApp extends StatelessWidget {
         AppRoutes.signupTerms: (_) => const SignupTermsScreen(),
         AppRoutes.onboarding1: (_) => const OnboardingStep1Screen(),
         AppRoutes.onboarding2: (_) => const OnboardingStep2Screen(),
-        AppRoutes.onboarding3: (_) => const OnboardingStep3Screen(),
         AppRoutes.shell: (_) => const MainShell(),
         // 채팅 탭(최근 대화)으로 바로 진입
         AppRoutes.conversations: (_) => const MainShell(initialIndex: 1),

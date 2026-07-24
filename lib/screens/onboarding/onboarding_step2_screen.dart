@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
 
-/// 온보딩 2단계 — 유머 취향/받고 싶은 선물 입력.
+/// 온보딩 2단계(마지막) — 유머 취향 입력 후 앱으로 진입.
 class OnboardingStep2Screen extends StatelessWidget {
   const OnboardingStep2Screen({super.key});
 
@@ -17,18 +16,17 @@ class OnboardingStep2Screen extends StatelessWidget {
               '페르소나에 맞춰 대화할 수 있어요.',
         ),
         action: PrimaryButton(
-          label: '다음',
-          onPressed: () => Navigator.pushNamed(context, AppRoutes.onboarding3),
+          label: '시작하기',
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.shell,
+            (r) => false,
+          ),
         ),
         children: const [
           LabeledTextField(
             label: '유머 취향을 입력해주세요',
             hint: 'ex) 아이러니, 블랙 코미디, 슬랩스틱',
-          ),
-          AppGaps.v24,
-          LabeledTextField(
-            label: '받고 싶은 선물을 입력해주세요',
-            hint: 'ex) 소품, 향초, 디저트',
           ),
         ],
       ),

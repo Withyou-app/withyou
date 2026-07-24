@@ -10,7 +10,6 @@ class AppRoutes {
   static const signupTerms = '/signup/terms';
   static const onboarding1 = '/onboarding/1';
   static const onboarding2 = '/onboarding/2';
-  static const onboarding3 = '/onboarding/3';
 
   // 메인 셸 (하단 네비 유동 활성화) — 탭 인덱스로 진입
   static const shell = '/shell';
