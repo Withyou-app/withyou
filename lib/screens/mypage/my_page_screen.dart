@@ -236,7 +236,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     height: 72,
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
-                      color: AppColors.inputFill,
+                      // 로고의 크림색 말풍선과 겹치지 않게 연노랑 배경.
+                      color: Color(0xFFFFF1C2),
                       shape: BoxShape.circle,
                     ),
                     child: Image.asset('assets/brand/app_logo.png',
