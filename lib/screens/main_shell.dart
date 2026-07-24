@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../routes/app_routes.dart';
 import '../widgets/widgets.dart';
 import '../services/shell_nav.dart';
+import 'chat/chat_screen.dart';
 import 'home/home_screen.dart';
 import 'conversations/recent_conversations_screen.dart';
 import 'report/report_list_screen.dart';
@@ -29,10 +31,40 @@ class _MainShellState extends State<MainShell> {
     MyPageScreen(),
   ];
 
+  bool _openingChat = false;
+
   @override
   void initState() {
     super.initState();
     ShellNav.instance.tabIndex.value = widget.initialIndex;
+    ShellNav.instance.tabIndex.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    ShellNav.instance.tabIndex.removeListener(_onTabChanged);
+    super.dispose();
+  }
+
+  /// 채팅 탭으로 돌아왔을 때 진행 중인 대화가 있으면 목록 대신 대화창을 다시 연다.
+  void _onTabChanged() {
+    final active = ShellNav.instance.activeChatPersona;
+    if (ShellNav.instance.tabIndex.value != ShellNav.chatTab ||
+        active == null ||
+        _openingChat) {
+      return;
+    }
+    _openingChat = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        _openingChat = false;
+        return;
+      }
+      Navigator.of(context)
+          .pushNamed(AppRoutes.chat,
+              arguments: ChatArgs(active, resume: true))
+          .then((_) => _openingChat = false);
+    });
   }
 
   @override

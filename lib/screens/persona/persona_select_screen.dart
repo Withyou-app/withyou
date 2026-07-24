@@ -3,6 +3,7 @@ import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
 import '../../models/persona.dart';
+import '../chat/chat_screen.dart';
 
 /// 페르소나 고르는 창 — 풀스크린. kPersonas 목록으로 카드를 구성한다.
 class PersonaSelectScreen extends StatelessWidget {
@@ -32,11 +33,11 @@ class PersonaSelectScreen extends StatelessWidget {
 
   Widget _personaCard(BuildContext context, Persona persona) {
     return AppCard(
-      // 고른 친구의 이름을 대화창으로 전달 → 해당 친구와의 대화창이 열린다.
+      // 고른 친구로 '새 대화'를 연다(기존 대화가 있어도 새로 시작).
       onTap: () => Navigator.pushNamed(
         context,
         AppRoutes.chat,
-        arguments: persona.name,
+        arguments: ChatArgs(persona.name, resume: false),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

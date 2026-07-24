@@ -3,6 +3,7 @@ import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
 import '../../services/conversation_store.dart';
+import '../chat/chat_screen.dart';
 import 'delete_conversation_dialog.dart';
 
 /// 최근 대화 창 — 탭 화면(콘텐츠 전용). 하단 네비는 상위 셸이 얹는다.
@@ -129,7 +130,8 @@ class _RecentConversationsScreenState
         if (_selectionMode) {
           _toggle(persona);
         } else {
-          Navigator.pushNamed(context, AppRoutes.chat, arguments: persona);
+          Navigator.pushNamed(context, AppRoutes.chat,
+              arguments: ChatArgs(persona, resume: true));
         }
       },
       child: Row(

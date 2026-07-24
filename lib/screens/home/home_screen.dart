@@ -4,6 +4,7 @@ import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
 import '../../services/auth_service.dart';
 import '../../services/conversation_store.dart';
+import '../chat/chat_screen.dart';
 
 /// 메인화면 — 탭 화면(콘텐츠 전용). 하단 네비는 상위 셸이 얹는다.
 class HomeScreen extends StatelessWidget {
@@ -77,8 +78,8 @@ class HomeScreen extends StatelessWidget {
     final preview =
         ConversationStore.instance.lastPreview(name) ?? '대화를 이어가 볼까요?';
     return AppCard(
-      onTap: () =>
-          Navigator.pushNamed(context, AppRoutes.chat, arguments: name),
+      onTap: () => Navigator.pushNamed(context, AppRoutes.chat,
+          arguments: ChatArgs(name, resume: true)),
       child: Row(
         children: [
           AppAvatar(size: 48, name: name),

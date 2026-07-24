@@ -15,6 +15,15 @@ import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import 'emergency_alert_sheet.dart';
 
+/// 대화창 진입 인자.
+/// [resume] true = 저장된 대화를 이어서 연다(최근 대화/탭 복귀),
+/// false = 새 대화(기존 저장분이 있으면 비우고 첫 인사부터 시작).
+class ChatArgs {
+  const ChatArgs(this.name, {this.resume = false});
+  final String name;
+  final bool resume;
+}
+
 /// 대화창 — 상단 바 + 메시지 리스트 + 입력바 + 하단 네비.
 ///
 /// 대화는 [ConversationStore] 에 자동 저장(중간저장)되어, 다른 탭을 보다
@@ -59,15 +68,32 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     super.didChangeDependencies();
     if (_seeded) return;
     _seeded = true;
-    _name = widget.partnerName ??
-        (ModalRoute.of(context)?.settings.arguments as String?) ??
-        '구나';
-    // 저장된 대화 복원(이어하기). 없으면 첫 인사만 로컬로 표시.
-    // (인사만 있고 대화를 진행하지 않으면 기록하지 않는다 → 첫 전송 때 저장)
+
+    // 진입 인자 해석: ChatArgs(신규/이어하기) 또는 과거 호환용 String(이어하기).
+    final arg = ModalRoute.of(context)?.settings.arguments;
+    var resume = false;
+    if (arg is ChatArgs) {
+      _name = arg.name;
+      resume = arg.resume;
+    } else if (arg is String) {
+      _name = arg;
+      resume = true; // 이름만 넘어온 과거 경로는 이어하기로 취급.
+    } else {
+      _name = widget.partnerName ?? '구나';
+      resume = widget.partnerName == null;
+    }
+
+    // 진행 중 대화로 등록 → 다른 탭 갔다 채팅 탭으로 돌아오면 이 대화가 다시 열린다.
+    ShellNav.instance.activeChatPersona = _name;
+
     final saved = ConversationStore.instance.messagesOf(_name);
-    if (saved.isNotEmpty) {
+    if (resume && saved.isNotEmpty) {
+      // 이어하기: 저장된 대화 복원.
       _messages.addAll(saved);
     } else {
+      // 새 대화: 남아있던 이전 대화는 비우고 첫 인사부터 시작.
+      // (인사만 있고 진행하지 않으면 기록하지 않는다 → 첫 전송 때 저장)
+      if (saved.isNotEmpty) ConversationStore.instance.clear(_name);
       _messages.add(ChatMessage.partner(
           '안녕! 나는 $_name${Korean.iya(_name)}. 오늘 하루는 어땠어?',
           time: _now()));
@@ -196,6 +222,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     );
     if (end != true || !mounted) return;
 
+    // 대화 종료 → 진행 중 대화 해제(채팅 탭은 다시 목록을 보여준다).
+    ShellNav.instance.activeChatPersona = null;
+
     _showLoading();
     final now = DateTime.now();
     final createdAt =
@@ -236,7 +265,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   /// 하단 네비 탭 → 대화창을 떠나 해당 탭으로.(대화는 저장돼 있어 나중에 이어짐)
+  /// 이미 채팅 탭이 활성인데 다시 누르면 대화창을 유지한다.
   void _leaveToTab(int index) {
+    if (index == ShellNav.chatTab) return;
     ShellNav.instance.goTo(index);
     Navigator.of(context).popUntil((r) => r.isFirst);
   }
