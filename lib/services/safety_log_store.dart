@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'backend/cloud_kv.dart';
 import 'safety_service.dart';
 
 /// 위험 대응 기록(safety_logs). (안전장치 설계 §6)
@@ -39,11 +41,20 @@ class SafetyLogStore extends ChangeNotifier {
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     final raw = _prefs!.getString(_kLogs);
-    if (raw == null || raw.isEmpty) return;
-    _logs
-      ..clear()
-      ..addAll((jsonDecode(raw) as List)
-          .map((e) => SafetyLog.fromJson(e as Map<String, dynamic>)));
+    if (raw != null && raw.isNotEmpty) {
+      _logs
+        ..clear()
+        ..addAll((jsonDecode(raw) as List)
+            .map((e) => SafetyLog.fromJson(e as Map<String, dynamic>)));
+    }
+    // 실서버가 켜져 있고 값이 있으면 서버 값을 우선 반영.
+    final remote = await CloudKV.get(_kLogs);
+    if (remote is List) {
+      _logs
+        ..clear()
+        ..addAll(
+            remote.map((e) => SafetyLog.fromJson(e as Map<String, dynamic>)));
+    }
   }
 
   /// medium/high 만 기록(low 는 기록하지 않음).
@@ -55,9 +66,11 @@ class SafetyLogStore extends ChangeNotifier {
         '${now.year}-${two(now.month)}-${two(now.day)} ${two(now.hour)}:${two(now.minute)}';
     _logs.insert(0, SafetyLog(level: level, action: action, at: at));
     notifyListeners();
+    final list = _logs.map((e) => e.toJson()).toList();
     if (_prefs != null) {
-      await _prefs!
-          .setString(_kLogs, jsonEncode(_logs.map((e) => e.toJson()).toList()));
+      await _prefs!.setString(_kLogs, jsonEncode(list));
     }
+    // 실서버 백업(켜져 있을 때만) — 관리자 페이지에서 위험 로그 모니터링.
+    unawaited(CloudKV.set(_kLogs, list));
   }
 }
