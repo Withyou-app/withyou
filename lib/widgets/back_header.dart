@@ -14,13 +14,17 @@ class AppBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: InkResponse(
-        onTap: onTap ?? () => Navigator.of(context).maybePop(),
-        radius: 24,
-        child: Transform.translate(
-          offset: const Offset(-8, 0),
-          child: const Icon(Icons.chevron_left,
+      child: Transform.translate(
+        offset: const Offset(-8, 0),
+        // 표준 IconButton 으로 48x48 이상 탭 영역을 보장(뒤로가기 확실히 동작).
+        child: IconButton(
+          onPressed: onTap ?? () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.chevron_left,
               size: 32, color: AppColors.textPrimary),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          splashRadius: 24,
+          tooltip: '뒤로',
         ),
       ),
     );
