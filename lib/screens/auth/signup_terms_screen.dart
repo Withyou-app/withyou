@@ -4,6 +4,7 @@ import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
 import '../../services/auth_service.dart';
+import '../../services/session_data.dart';
 
 /// 회원가입 3단계 — 약관 동의.
 /// 이전 단계에서 (이메일, 비밀번호)를 라우트 인자로 전달받는다.
@@ -61,6 +62,8 @@ class _SignupTermsScreenState extends State<SignupTermsScreen> {
     }
     // 마케팅(선택) 동의 여부 저장.
     await AuthService.instance.setMarketingConsent(_agreed['marketing'] ?? false);
+    // 실서버 모드: 새 계정 기준으로 로컬 캐시 정리/동기화.
+    await SessionData.onLogin();
     if (!mounted) return;
     Navigator.pushNamed(context, AppRoutes.onboarding1);
   }

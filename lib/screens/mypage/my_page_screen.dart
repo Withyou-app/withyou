@@ -4,6 +4,7 @@ import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
 import '../../services/auth_service.dart';
+import '../../services/session_data.dart';
 import '../../services/conversation_store.dart';
 
 /// 마이페이지 — 탭 화면. 하단 네비는 상위 셸이 담당하므로 넣지 않는다.
@@ -195,6 +196,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   Future<void> _logout() async {
     await AuthService.instance.logOut();
+    // 실서버 모드: 로컬 캐시를 비워 다음 사용자에게 데이터가 남지 않게.
+    await SessionData.onLogout();
     if (!mounted) return;
     Navigator.pushNamedAndRemoveUntil(
         context, AppRoutes.login, (route) => false);
@@ -225,10 +228,20 @@ class _MyPageScreenState extends State<MyPageScreen> {
             children: [
               const Text('마이페이지', style: AppTextStyles.title),
               AppGaps.v24,
-              // 프로필
+              // 프로필 — 앱 로고를 아바타로 사용.
               Row(
                 children: [
-                  const AppAvatar(size: 72, color: AppColors.muted),
+                  Container(
+                    width: 72,
+                    height: 72,
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
+                      color: AppColors.inputFill,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Image.asset('assets/brand/app_logo.png',
+                        fit: BoxFit.contain),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/mind_report.dart';
 import 'backend/cloud_kv.dart';
+import 'backend/supabase_service.dart';
 
 /// 생성된 마음 리포트들을 영속 보관한다. 리포트 탭이 이 목록을 보여준다.
 class ReportStore extends ChangeNotifier {
@@ -61,10 +62,36 @@ class ReportStore extends ChangeNotifier {
     await _persist();
   }
 
+  /// 로그인 직후: 서버(현재 사용자)의 리포트로 교체. 로컬 모드면 그대로 둔다.
+  Future<void> reloadForCurrentUser() async {
+    if (!SupabaseService.instance.enabled) return;
+    _reports.clear();
+    final remote = await CloudKV.get(_kReports);
+    if (remote is List) {
+      _reports.addAll(
+          remote.map((e) => MindReport.fromJson(e as Map<String, dynamic>)));
+    }
+    await _writeLocal();
+    notifyListeners();
+  }
+
+  /// 로그아웃: 메모리 + 로컬 캐시만 비운다(서버 데이터는 보존).
+  Future<void> clearForLogout() async {
+    if (!SupabaseService.instance.enabled) return;
+    _reports.clear();
+    await _prefs.remove(_kReports);
+    notifyListeners();
+  }
+
   Future<void> _persist() async {
-    final list = _reports.map((r) => r.toJson()).toList();
-    await _prefs.setString(_kReports, jsonEncode(list));
+    final list = await _writeLocal();
     // 실서버 백업(켜져 있을 때만).
     unawaited(CloudKV.set(_kReports, list));
+  }
+
+  Future<List<Map<String, dynamic>>> _writeLocal() async {
+    final list = _reports.map((r) => r.toJson()).toList();
+    await _prefs.setString(_kReports, jsonEncode(list));
+    return list;
   }
 }

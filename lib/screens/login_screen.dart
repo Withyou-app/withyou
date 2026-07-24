@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../routes/app_routes.dart';
 import '../services/auth_service.dart';
+import '../services/session_data.dart';
 import '../models/social_provider.dart';
 import '../widgets/widgets.dart';
 
@@ -49,7 +50,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   /// 인증 후 이동: 호칭(이름)이 없으면 온보딩(호칭 필수)으로, 있으면 메인 셸로.
-  void _goAfterAuth() {
+  Future<void> _goAfterAuth() async {
+    // 실서버 모드: 로그인한 사용자의 대화·리포트를 서버에서 다시 불러온다.
+    await SessionData.onLogin();
+    if (!mounted) return;
     final name = AuthService.instance.currentUser?.name ?? '';
     final route = name.isEmpty ? AppRoutes.onboarding1 : AppRoutes.shell;
     Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);

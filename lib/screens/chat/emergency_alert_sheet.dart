@@ -54,22 +54,17 @@ class _EmergencyAlertContent extends StatelessWidget {
                 child: const Icon(Icons.notifications_active,
                     color: AppColors.white, size: 42),
               ),
-              AppGaps.v20,
-              const Text('잠깐, 지금 당신이 가장 소중해요',
+              AppGaps.v16,
+              const Text('지금 당신이 가장 소중해요',
                   style: AppTextStyles.title, textAlign: TextAlign.center),
               AppGaps.v8,
               const Text(
-                '많이 힘든 마음이 느껴졌어요.\n혼자 견디지 말고 아래 도움을 받아보세요.',
+                '혼자 견디지 말고 아래로 연락해보세요.',
                 style: AppTextStyles.subtitle,
                 textAlign: TextAlign.center,
               ),
               AppGaps.v20,
-              // 안전 안내(§2)
-              _guide('지금 안전한 곳에 있는지 확인해요'),
-              _guide('혼자라면 곁에 있는 가족·친구·선생님 등 믿을 수 있는 사람에게 알려요'),
-              _guide('즉각적인 위험이 있다면 바로 긴급 기관에 연락해요'),
-              AppGaps.v20,
-              // 긴급 지원 기관(§2)
+              // 긴급 지원 기관 — 탭하면 전화 연결.
               _phoneCard('자살예방 상담전화', '109'),
               AppGaps.v12,
               _phoneCard('청소년 상담전화', '1388'),
@@ -77,32 +72,15 @@ class _EmergencyAlertContent extends StatelessWidget {
               _phoneCard('경찰', '112'),
               AppGaps.v12,
               _phoneCard('소방·응급', '119'),
-              AppGaps.v20,
+              AppGaps.v16,
               const Text(
-                'withyou+는 정서 지원 서비스로, 전문 상담이나 의료를 대체하지 않아요.',
+                '정서 지원 서비스로, 전문 상담·의료를 대체하지 않아요.',
                 style: AppTextStyles.caption,
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _guide(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Icon(Icons.check_circle, size: 18, color: AppColors.primary),
-          ),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text, style: AppTextStyles.body)),
-        ],
       ),
     );
   }

@@ -160,7 +160,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
     // High: 일반 대화 중단 → 안전 안내 화면으로 전환.
     if (risk == SafetyLevel.high) {
-      await SafetyLogStore.instance.log(SafetyLevel.high, '안전 안내 화면 전환');
+      await SafetyLogStore.instance
+          .log(SafetyLevel.high, '안전 안내 화면 전환', text: text);
       if (!mounted) return;
       setState(() {
         _messages.add(ChatMessage.partner(
@@ -194,7 +195,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         }
       });
       if (risk == SafetyLevel.medium) {
-        await SafetyLogStore.instance.log(SafetyLevel.medium, '안내 문구 추가');
+        await SafetyLogStore.instance
+            .log(SafetyLevel.medium, '안내 문구 추가', text: text);
       }
     } catch (_) {
       if (!mounted) return;

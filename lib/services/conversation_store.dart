@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/chat_message.dart';
 import 'backend/cloud_kv.dart';
+import 'backend/supabase_service.dart';
 
 /// 진행 중인 대화를 페르소나별로 보관/영속화한다. (중간저장 → 이어하기)
 ///
@@ -51,6 +52,25 @@ class ConversationStore extends ChangeNotifier {
     });
   }
 
+  /// 로그인 직후: 서버(현재 사용자)의 대화로 교체한다.
+  /// 로컬 모드면 기존 로컬 데이터를 그대로 둔다(사용자 구분 없음).
+  Future<void> reloadForCurrentUser() async {
+    if (!SupabaseService.instance.enabled) return;
+    _byPersona.clear();
+    final remote = await CloudKV.get(_kConversations);
+    if (remote is Map<String, dynamic>) _decodeInto(remote);
+    await _writeLocal(); // 현재 사용자 데이터로 로컬 캐시 갱신
+    notifyListeners();
+  }
+
+  /// 로그아웃: 메모리 + 로컬 캐시만 비운다(서버 데이터는 보존).
+  Future<void> clearForLogout() async {
+    if (!SupabaseService.instance.enabled) return;
+    _byPersona.clear();
+    await _prefs?.remove(_kConversations);
+    notifyListeners();
+  }
+
   /// 최근 대화 목록에 쓸 페르소나들 — 사용자가 실제로 메시지를 보낸 대화만.
   /// (인사말만 있고 대화를 진행하지 않은 건 기록/표시하지 않는다)
   /// 최근에 활동한 대화가 앞에 오도록 역순으로 반환한다.
@@ -94,12 +114,19 @@ class ConversationStore extends ChangeNotifier {
   }
 
   Future<void> _persist() async {
-    if (_prefs == null) return; // 초기화 전(테스트 등)에는 메모리에만.
+    final map = await _writeLocal();
+    if (map == null) return;
+    // 실서버 백업(켜져 있을 때만, 실패해도 로컬 흐름은 유지).
+    unawaited(CloudKV.set(_kConversations, map));
+  }
+
+  /// 로컬(shared_preferences)에만 기록하고 직렬화한 맵을 돌려준다.
+  Future<Map<String, dynamic>?> _writeLocal() async {
+    if (_prefs == null) return null; // 초기화 전(테스트 등)에는 메모리에만.
     final map = _byPersona.map(
       (persona, msgs) => MapEntry(persona, msgs.map((m) => m.toJson()).toList()),
     );
     await _prefs!.setString(_kConversations, jsonEncode(map));
-    // 실서버 백업(켜져 있을 때만, 실패해도 로컬 흐름은 유지).
-    unawaited(CloudKV.set(_kConversations, map));
+    return map;
   }
 }
