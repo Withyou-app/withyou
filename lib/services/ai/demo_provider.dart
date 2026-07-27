@@ -1,4 +1,4 @@
-import 'ai_personas.dart';
+import 'ai_prompts.dart';
 import 'ai_types.dart';
 
 /// 키가 없을 때 쓰는 오프라인 데모 제공자. (메일의 데모 모드와 같은 개념)

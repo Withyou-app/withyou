@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:withyou/models/app_user.dart';
-import 'package:withyou/services/ai/ai_personas.dart';
+import 'package:withyou/services/ai/ai_prompts.dart';
 import 'package:withyou/services/ai/ai_types.dart';
 import 'package:withyou/services/ai/demo_provider.dart';
 

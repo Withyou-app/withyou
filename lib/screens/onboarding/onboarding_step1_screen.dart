@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import '../../theme/theme.dart';
 import '../../widgets/widgets.dart';
 import '../../routes/app_routes.dart';
+import '../../models/app_user.dart';
 import '../../services/auth_service.dart';
 
-/// 온보딩 1단계 — 호칭/스타일/자기소개 입력.
-/// 입력한 '호칭'을 표시 이름으로 저장한다(홈의 "OO님").
+/// 온보딩 1단계 — 호칭/말투(반말·존댓말)/자기소개 입력.
+/// 입력값을 프로필로 저장한다(말투는 AI 대화에 그대로 적용됨).
 class OnboardingStep1Screen extends StatefulWidget {
   const OnboardingStep1Screen({super.key});
 
@@ -15,23 +16,36 @@ class OnboardingStep1Screen extends StatefulWidget {
 
 class _OnboardingStep1ScreenState extends State<OnboardingStep1Screen> {
   final _nicknameController = TextEditingController();
+  final _bioController = TextEditingController();
+  int _speechIndex = 0; // 0 = 반말(기본), 1 = 존댓말
+  static const _styles = [AppUser.kBanmal, AppUser.kJondaetmal];
 
   @override
   void dispose() {
     _nicknameController.dispose();
+    _bioController.dispose();
     super.dispose();
   }
 
   Future<void> _onNext() async {
     final nickname = _nicknameController.text.trim();
     if (nickname.isEmpty) {
-      // 호칭은 필수.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('호칭을 입력해주세요')),
       );
       return;
     }
-    await AuthService.instance.setName(nickname);
+    // 호칭 + 말투 + 자기소개를 한 번에 저장.
+    final base = AuthService.instance.currentUser;
+    if (base != null) {
+      await AuthService.instance.updateProfile(base.copyWith(
+        name: nickname,
+        speechStyle: _styles[_speechIndex],
+        bio: _bioController.text.trim(),
+      ));
+    } else {
+      await AuthService.instance.setName(nickname);
+    }
     if (!mounted) return;
     Navigator.pushNamed(context, AppRoutes.onboarding2);
   }
@@ -53,13 +67,18 @@ class _OnboardingStep1ScreenState extends State<OnboardingStep1Screen> {
             controller: _nicknameController,
           ),
           AppGaps.v24,
-          const Text('어떤 스타일로 불러드릴까요?', style: AppTextStyles.label),
+          const Text('어떤 말투로 대화할까요?', style: AppTextStyles.label),
           AppGaps.v8,
-          const SegmentedToggle(options: ['반말', '존댓말']),
+          SegmentedToggle(
+            options: const ['반말', '존댓말'],
+            initialIndex: _speechIndex,
+            onChanged: (i) => _speechIndex = i,
+          ),
           AppGaps.v24,
-          const LabeledTextField(
+          LabeledTextField(
             label: '자기소개',
             hint: '자기소개를 간단하게 입력해주세요',
+            controller: _bioController,
             maxLines: 5,
           ),
         ],

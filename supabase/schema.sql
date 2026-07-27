@@ -7,10 +7,11 @@
 create table if not exists public.profiles (
   id         uuid primary key references auth.users (id) on delete cascade,
   email      text,
-  name       text default '',
-  bio        text default '',
-  humor      text default '',
-  gift_taste text default '',
+  name         text default '',
+  bio          text default '',
+  humor        text default '',
+  speech_style text default '반말',   -- AI 말투: '반말' | '존댓말'
+  gift_taste   text default '',
   allergy    text default '',
   scent      text default '',
   marketing  boolean default false,

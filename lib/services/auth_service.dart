@@ -196,6 +196,7 @@ class AuthService {
         name: profile.name,
         bio: profile.bio,
         humor: profile.humor,
+        speechStyle: profile.speechStyle,
         giftTaste: profile.giftTaste,
         allergy: profile.allergy,
         scent: profile.scent,
@@ -208,6 +209,7 @@ class AuthService {
     account['name'] = profile.name;
     account['bio'] = profile.bio;
     account['humor'] = profile.humor;
+    account['speechStyle'] = profile.speechStyle;
     account['giftTaste'] = profile.giftTaste;
     account['allergy'] = profile.allergy;
     account['scent'] = profile.scent;
@@ -327,6 +329,7 @@ class AuthService {
           name: (row['name'] as String?) ?? '',
           bio: (row['bio'] as String?) ?? '',
           humor: (row['humor'] as String?) ?? '',
+          speechStyle: (row['speech_style'] as String?) ?? AppUser.kBanmal,
           giftTaste: (row['gift_taste'] as String?) ?? '',
           allergy: (row['allergy'] as String?) ?? '',
           scent: (row['scent'] as String?) ?? '',
@@ -349,6 +352,7 @@ class AuthService {
         'name': u.name,
         'bio': u.bio,
         'humor': u.humor,
+        'speech_style': u.speechStyle,
         'gift_taste': u.giftTaste,
         'allergy': u.allergy,
         'scent': u.scent,
@@ -376,6 +380,7 @@ class AuthService {
         name: account['name'] ?? '',
         bio: account['bio'] ?? '',
         humor: account['humor'] ?? '',
+        speechStyle: account['speechStyle'] ?? AppUser.kBanmal,
         giftTaste: account['giftTaste'] ?? '',
         allergy: account['allergy'] ?? '',
         scent: account['scent'] ?? '',

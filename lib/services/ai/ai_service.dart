@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../models/mind_report.dart';
 import '../auth_service.dart';
-import 'ai_personas.dart';
+import 'ai_prompts.dart';
 import 'ai_types.dart';
 import 'claude_provider.dart';
 import 'demo_provider.dart';
