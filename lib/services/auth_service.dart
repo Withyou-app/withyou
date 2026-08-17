@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../models/app_user.dart';
@@ -54,6 +55,8 @@ class AuthService {
   // 이메일 인증번호 (email → code). 프로토타입: 앱 메모리에만 보관.
   final Map<String, String> _verificationCodes = {};
   final Random _random = Random();
+  // 비밀번호 솔트 생성용 — 암호학적으로 안전한 난수원.
+  final Random _secureRandom = Random.secure();
 
   /// 인증번호 발급.
   ///
@@ -115,7 +118,14 @@ class AuthService {
     if (accounts.containsKey(email)) {
       return const AuthResult.failure('이미 가입된 이메일이에요');
     }
-    accounts[email] = {'password': password, 'name': ''};
+    // 로컬 저장 비밀번호는 평문 금지 → 계정별 랜덤 솔트 + SHA-256 해시로 보관한다.
+    // (저장 형식 변경: 프로토타입 시절 평문 계정은 더 이상 로그인되지 않음 — 로컬 시험 데이터라 허용.)
+    final salt = _generateSalt();
+    accounts[email] = {
+      'salt': salt,
+      'passwordHash': _hashPassword(salt, password),
+      'name': '',
+    };
     await _saveAccounts(accounts);
 
     _currentUser = AppUser(email: email, name: '');
@@ -135,7 +145,12 @@ class AuthService {
 
     final account = _accounts()[email];
     if (account == null) return const AuthResult.failure('가입되지 않은 이메일이에요');
-    if (account['password'] != password) {
+    // 저장된 솔트로 입력 비밀번호를 동일하게 해시해 비교한다(평문 비교 금지).
+    final salt = account['salt'];
+    final expectedHash = account['passwordHash'];
+    if (salt == null ||
+        expectedHash == null ||
+        !_constantTimeEquals(_hashPassword(salt, password), expectedHash)) {
       return const AuthResult.failure('비밀번호가 일치하지 않아요');
     }
     _currentUser = _userFrom(email, account);
@@ -371,6 +386,30 @@ class AuthService {
     }
     if (m.contains('password')) return '비밀번호를 확인해주세요';
     return '인증에 실패했어요: $raw';
+  }
+
+  // --- 비밀번호 해시 헬퍼(로컬 모드 전용) ---
+
+  /// 16바이트 랜덤 솔트를 hex 문자열로 생성한다.
+  String _generateSalt() {
+    final bytes = List<int>.generate(16, (_) => _secureRandom.nextInt(256));
+    return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+  }
+
+  /// SHA-256(salt + password) 를 hex 문자열로 반환.
+  String _hashPassword(String salt, String password) {
+    final digest = sha256.convert(utf8.encode('$salt$password'));
+    return digest.toString();
+  }
+
+  /// 같은 길이 문자열의 상수 시간 비교(타이밍 공격 완화).
+  bool _constantTimeEquals(String a, String b) {
+    if (a.length != b.length) return false;
+    var diff = 0;
+    for (var i = 0; i < a.length; i++) {
+      diff |= a.codeUnitAt(i) ^ b.codeUnitAt(i);
+    }
+    return diff == 0;
   }
 
   // --- 내부 저장 헬퍼 ---
