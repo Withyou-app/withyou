@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:withyou/services/auth_service.dart';
@@ -64,5 +66,38 @@ void main() {
     await auth.logOut();
     await auth.signInWithSocial(SocialProvider.kakao);
     expect(auth.currentUser?.name, '카톡이'); // 재로그인 시 이름 유지
+  });
+
+  // --- 비밀번호는 평문이 아니라 salt+해시로 저장된다 ---
+
+  test('저장된 계정에 평문 비밀번호가 없고 salt/passwordHash 로 저장된다', () async {
+    await auth.signUp(email: 'a@b.com', password: 'secret123!');
+    final raw = (await SharedPreferences.getInstance())
+            .getString('auth_accounts') ??
+        '';
+    expect(raw, isNot(contains('secret123!'))); // 평문 노출 없음
+    expect(raw, contains('salt'));
+    expect(raw, contains('passwordHash'));
+  });
+
+  test('해시 검증: 올바른 비밀번호만 로그인에 성공한다', () async {
+    await auth.signUp(email: 'a@b.com', password: 'secret123!');
+    await auth.logOut();
+    expect((await auth.logIn(email: 'a@b.com', password: 'wrong')).ok, isFalse);
+    final ok = await auth.logIn(email: 'a@b.com', password: 'secret123!');
+    expect(ok.ok, isTrue);
+  });
+
+  test('같은 비밀번호라도 계정마다 salt 가 달라 해시가 다르다', () async {
+    await auth.signUp(email: 'a@b.com', password: 'samePw1!');
+    await auth.logOut();
+    await auth.signUp(email: 'c@d.com', password: 'samePw1!');
+    final raw =
+        (await SharedPreferences.getInstance()).getString('auth_accounts')!;
+    final decoded = jsonDecode(raw) as Map<String, dynamic>;
+    final hashA = (decoded['a@b.com'] as Map)['passwordHash'];
+    final hashC = (decoded['c@d.com'] as Map)['passwordHash'];
+    expect(hashA, isNotNull);
+    expect(hashA, isNot(equals(hashC))); // salt 가 달라 해시도 다름
   });
 }
