@@ -5,7 +5,6 @@
 # 1) Discord: 서버 설정 → 연동 → 웹후크 → 새 웹후크 → 채널 선택 → URL 복사
 # 2) GitHub: 이 레포 → Settings → Secrets and variables → Actions →
 #    New repository secret → 이름 DISCORD_WEBHOOK, 값=복사한 URL
-#    (CLI: gh secret set DISCORD_WEBHOOK --repo <owner>/<repo>)
 # 시크릿이 없으면 아무 것도 보내지 않고 조용히 통과합니다.
 # ──────────────────────────────────────────────────────────────────
 
@@ -35,17 +34,17 @@ jobs:
           BODY: ${{ github.event.pull_request.body }}
         run: |
           if [ "$MERGED" = "true" ]; then
-            title="🟢 PR 머지됨"; color="0x57F287"
+            title="PR 머지됨"; color="0x57F287"
           elif [ "$ACTION" = "closed" ]; then
-            title="🔴 PR 닫힘 (머지 안 됨)"; color="0xED4245"
+            title="PR 닫힘 (머지 안 됨)"; color="0xED4245"
           elif [ "$ACTION" = "opened" ] || [ "$ACTION" = "reopened" ] || [ "$ACTION" = "ready_for_review" ]; then
-            title="🔵 새 PR"; color="0x5865F2"
+            title="새 PR"; color="0x5865F2"
           else
-            title="🟡 PR 업데이트"; color="0xFEE75C"
+            title="PR 업데이트"; color="0xFEE75C"
           fi
           body="$BODY"
           if [ -z "$body" ]; then
-            body="_(설명이 비어 있습니다)_"
+            body="(설명이 비어 있습니다)"
           elif [ "${#body}" -gt 1400 ]; then
             body="${body:0:1400}
 
@@ -79,4 +78,4 @@ jobs:
             ${{ steps.msg.outputs.body }}
 
             ───────────────
-            🔗 [PR 보기](${{ github.event.pull_request.html_url }})  ·  📝 커밋 ${{ github.event.pull_request.commits }}  ·  ✨ +${{ github.event.pull_request.additions }} / -${{ github.event.pull_request.deletions }}  ·  📄 파일 ${{ github.event.pull_request.changed_files }}개
+            [PR 보기](${{ github.event.pull_request.html_url }})  ·  커밋 ${{ github.event.pull_request.commits }}  ·  +${{ github.event.pull_request.additions }} / -${{ github.event.pull_request.deletions }}  ·  파일 ${{ github.event.pull_request.changed_files }}개
