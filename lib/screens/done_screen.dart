@@ -55,7 +55,7 @@ class DoneScreen extends StatelessWidget {
                         fontFamily: 'BagelFatOne',
                         fontSize: 52,
                         fontWeight: FontWeight.w400,
-                        color: Colors.white,
+                        color: Color(0xFFFFCD8C),
                       ),
                     ),
                     TextSpan(text: '를\n이용할 준비가 다 되었어요!'),
