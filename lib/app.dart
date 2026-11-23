@@ -8,7 +8,8 @@ import 'screens/id_setup_screen.dart';
 import 'screens/password_setup_screen.dart';
 import 'screens/done_screen.dart';
 import 'screens/home/home_v2_screen.dart';
-import 'screens/persona/persona_select_screen.dart';
+import 'screens/persona/persona_select_v2_screen.dart';
+import 'screens/chat/chat_v2_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/auth/signup_email_screen.dart';
@@ -52,7 +53,8 @@ class WithYouApp extends StatelessWidget {
         AppRoutes.signupPw: (_) => const PasswordSetupScreen(),
         AppRoutes.signupDone: (_) => const DoneScreen(),
         AppRoutes.homeV2: (_) => const HomeV2Screen(),
-        AppRoutes.personaSelect: (_) => const PersonaSelectScreen(),
+        AppRoutes.personaSelect: (_) => const PersonaSelectV2Screen(),
+        AppRoutes.chatV2: (_) => const ChatV2Screen(),
         AppRoutes.login: (_) => const LoginScreen(),
         AppRoutes.signupEmail: (_) => const SignupEmailScreen(),
         AppRoutes.signupPassword: (_) => const SignupPasswordScreen(),

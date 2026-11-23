@@ -28,6 +28,7 @@ class AppRoutes {
   // v2 메인 앱 화면 (Section 2)
   static const homeV2 = '/v2/home';
   static const personaSelect = '/v2/persona';
+  static const chatV2 = '/v2/chat';
 
   // 메인 셸 (하단 네비 유동 활성화) — 탭 인덱스로 진입
   static const shell = '/shell';
