@@ -16,6 +16,7 @@ class HomeV2Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -26,7 +27,22 @@ class HomeV2Screen extends StatelessWidget {
             stops: [0.0, 0.192, 1.0],
           ),
         ),
-        child: SafeArea(
+        child: Stack(
+          children: [
+            // 배경 장식 블롭 (우 노랑 / 좌 핑크) — 캐릭터 뒤.
+            Positioned(
+              top: size.height * 0.11,
+              right: -size.width * 0.06,
+              width: size.width * 0.52,
+              child: Image.asset('assets/brand/home_blob_right.png'),
+            ),
+            Positioned(
+              top: size.height * 0.22,
+              left: -size.width * 0.12,
+              width: size.width * 0.56,
+              child: Image.asset('assets/brand/home_blob_left.png'),
+            ),
+            SafeArea(
           child: Column(
             children: [
               Expanded(
@@ -137,6 +153,8 @@ class HomeV2Screen extends StatelessWidget {
               const _BottomNav(current: 0),
             ],
           ),
+            ),
+          ],
         ),
       ),
     );
