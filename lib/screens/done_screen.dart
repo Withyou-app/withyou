@@ -7,8 +7,8 @@ class DoneScreen extends StatelessWidget {
   const DoneScreen({super.key});
 
   void _done(BuildContext context) {
-    // 가입 완료 → 메인 앱(홈)으로. (v1 로그인 화면으로 가지 않는다)
-    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.shell, (r) => false);
+    // 가입 완료 → v2 메인 홈으로. (v1 셸/로그인으로 가지 않는다)
+    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.homeV2, (r) => false);
   }
 
   @override

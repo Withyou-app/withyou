@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 2200));
     if (!mounted) return;
     final next = AuthService.instance.isLoggedIn
-        ? AppRoutes.shell
+        ? AppRoutes.homeV2
         : AppRoutes.intro;
     Navigator.of(context).pushReplacementNamed(next);
   }
