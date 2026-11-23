@@ -12,9 +12,10 @@ class AppRoutes {
   // 초대링크 입력 (솔루션2)
   static const invite = '/invite';
 
-  // 회원가입 아이디/비밀번호 (솔루션3/4 — v2 온보딩)
+  // 회원가입 아이디/비밀번호/완료 (솔루션3/4/5 — v2 온보딩)
   static const signupId = '/signup-id';
   static const signupPw = '/signup-pw';
+  static const signupDone = '/signup-done';
 
   // 인증 / 온보딩 (풀스크린, 하단 네비 없음)
   static const login = '/login';
