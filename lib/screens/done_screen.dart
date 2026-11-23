@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import '../routes/app_routes.dart';
 import '../widgets/onboarding_kit.dart';
 
-/// 가입 완료 화면(솔루션5) — 온보딩 마지막 단계.
-///
-/// 중앙 캐릭터 일러스트 자리는 비워 둔다(에셋 확정 후 교체).
+/// 가입 완료 화면(솔루션5 / iPhone 14 & 15 Pro - 79) — 온보딩 마지막 단계.
 class DoneScreen extends StatelessWidget {
   const DoneScreen({super.key});
 
-  void _start(BuildContext context) {
+  void _done(BuildContext context) {
     Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
 
@@ -29,12 +27,13 @@ class DoneScreen extends StatelessWidget {
               const OnboardingHeader(step: 4),
               const SizedBox(height: 38),
               // 제목: "이제 withyou+를\n이용할 준비가 다 되었어요!"
+              // (withyou+는 Bagel 52px, withyou=#FF8E88 / +=흰색)
               const Text.rich(
                 TextSpan(
                   style: TextStyle(
                     fontFamily: 'HumanBeomseokNeo',
                     fontSize: 24,
-                    height: 1.4,
+                    height: 2.0,
                     color: Color(0xFF90796A),
                     fontWeight: FontWeight.w700,
                     fontVariations: [FontVariation('wght', 700)],
@@ -45,6 +44,7 @@ class DoneScreen extends StatelessWidget {
                       text: 'withyou',
                       style: TextStyle(
                         fontFamily: 'BagelFatOne',
+                        fontSize: 52,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFFFF8E88),
                       ),
@@ -53,32 +53,41 @@ class DoneScreen extends StatelessWidget {
                       text: '+',
                       style: TextStyle(
                         fontFamily: 'BagelFatOne',
+                        fontSize: 52,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFFFFCD8C),
+                        color: Colors.white,
                       ),
                     ),
                     TextSpan(text: '를\n이용할 준비가 다 되었어요!'),
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 4),
               // 부제
               const Text(
                 '지금바로 시작해볼까요?',
                 style: TextStyle(
                   fontFamily: 'HumanBeomseokNeo',
-                  fontSize: 15,
-                  color: Color(0xFFB9AA9F),
-                  fontWeight: FontWeight.w600,
-                  fontVariations: [FontVariation('wght', 600)],
+                  fontSize: 18,
+                  color: Color(0xFF90796A),
+                  fontWeight: FontWeight.w700,
+                  fontVariations: [FontVariation('wght', 700)],
                 ),
               ),
-              // 중앙 캐릭터 일러스트 자리 — 비워 둠(에셋 확정 후 삽입).
-              const Spacer(),
+              // 중앙 캐릭터 일러스트(3마리).
+              Expanded(
+                child: Center(
+                  child: Image.asset(
+                    'assets/brand/sol5_characters.png',
+                    width: size.width * 356 / 393,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
               PrimaryButton(
-                label: '시작하기',
+                label: '완료',
                 enabled: true,
-                onTap: () => _start(context),
+                onTap: () => _done(context),
               ),
               SizedBox(height: size.height * 0.03),
             ],
