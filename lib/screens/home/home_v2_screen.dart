@@ -70,7 +70,7 @@ class HomeV2Screen extends StatelessWidget {
                       // 중앙 캐릭터 (임시 placeholder)
                       Center(
                         child: Image.asset(
-                          'assets/brand/sol5_characters.png',
+                          'assets/brand/char_rimi.png',
                           height: 220,
                           fit: BoxFit.contain,
                         ),
@@ -208,7 +208,7 @@ class _ConvCard extends StatelessWidget {
             ),
             clipBehavior: Clip.antiAlias,
             child: Image.asset(
-              'assets/brand/sol5_characters.png',
+              'assets/brand/char_rimi.png',
               fit: BoxFit.cover,
             ),
           ),
