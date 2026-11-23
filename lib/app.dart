@@ -6,6 +6,7 @@ import 'screens/intro_screen.dart';
 import 'screens/invite_screen.dart';
 import 'screens/id_setup_screen.dart';
 import 'screens/password_setup_screen.dart';
+import 'screens/done_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/auth/signup_email_screen.dart';
@@ -47,6 +48,7 @@ class WithYouApp extends StatelessWidget {
         AppRoutes.invite: (_) => const InviteScreen(),
         AppRoutes.signupId: (_) => const IdSetupScreen(),
         AppRoutes.signupPw: (_) => const PasswordSetupScreen(),
+        AppRoutes.signupDone: (_) => const DoneScreen(),
         AppRoutes.login: (_) => const LoginScreen(),
         AppRoutes.signupEmail: (_) => const SignupEmailScreen(),
         AppRoutes.signupPassword: (_) => const SignupPasswordScreen(),

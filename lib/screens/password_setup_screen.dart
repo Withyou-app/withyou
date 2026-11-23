@@ -28,8 +28,7 @@ class _PasswordSetupScreenState extends State<PasswordSetupScreen> {
       title: '회원가입을 위한\n비밀번호를 입력해주세요',
       buttonLabel: '다음',
       nextEnabled: _canNext,
-      onNext: () =>
-          Navigator.of(context).pushReplacementNamed(AppRoutes.login),
+      onNext: () => Navigator.of(context).pushNamed(AppRoutes.signupDone),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
