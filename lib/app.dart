@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
 import 'routes/app_routes.dart';
-import 'services/auth_service.dart';
+import 'screens/splash_screen.dart';
+import 'screens/intro_screen.dart';
+import 'screens/invite_screen.dart';
+import 'screens/id_setup_screen.dart';
+import 'screens/password_setup_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/auth/signup_email_screen.dart';
@@ -35,10 +39,14 @@ class WithYouApp extends StatelessWidget {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: child,
       ),
-      // 이미 로그인된 세션이 있으면 바로 메인 셸로.
-      initialRoute:
-          AuthService.instance.isLoggedIn ? AppRoutes.shell : AppRoutes.login,
+      // 앱 진입은 항상 스플래시부터. 이후 로그인 상태에 따라 분기.
+      initialRoute: AppRoutes.splash,
       routes: {
+        AppRoutes.splash: (_) => const SplashScreen(),
+        AppRoutes.intro: (_) => const IntroScreen(),
+        AppRoutes.invite: (_) => const InviteScreen(),
+        AppRoutes.signupId: (_) => const IdSetupScreen(),
+        AppRoutes.signupPw: (_) => const PasswordSetupScreen(),
         AppRoutes.login: (_) => const LoginScreen(),
         AppRoutes.signupEmail: (_) => const SignupEmailScreen(),
         AppRoutes.signupPassword: (_) => const SignupPasswordScreen(),
