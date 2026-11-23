@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../routes/app_routes.dart';
 
 /// v2 홈 화면 (Figma: iPhone 14 & 15 Pro - 88 / 817:1511).
 ///
@@ -94,7 +95,10 @@ class HomeV2Screen extends StatelessWidget {
                       const SizedBox(height: 8),
                       // 시작하기 버튼 (pill)
                       Center(
-                        child: _StartButton(onTap: () {}),
+                        child: _StartButton(
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(AppRoutes.personaSelect),
+                        ),
                       ),
                       const SizedBox(height: 32),
                       // 최근 한 대화 헤더
