@@ -32,8 +32,9 @@ class StepProgressBar extends StatelessWidget {
           child: Container(
             height: 8,
             decoration: BoxDecoration(
-              color: i < current ? _kTrackFilled : _kTrackEmpty,
-              borderRadius: BorderRadius.circular(4),
+              // 디자인: 현재 단계 칸만 포인트색(누적 아님).
+              color: i == current - 1 ? _kTrackFilled : _kTrackEmpty,
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
         ),
@@ -82,10 +83,10 @@ class FieldLabel extends StatelessWidget {
       text,
       style: const TextStyle(
         fontFamily: 'HumanBeomseokNeo',
-        fontSize: 14,
+        fontSize: 16,
         color: _kBrown,
-        fontWeight: FontWeight.w600,
-        fontVariations: [FontVariation('wght', 600)],
+        fontWeight: FontWeight.w700,
+        fontVariations: [FontVariation('wght', 700)],
       ),
     );
   }
@@ -142,20 +143,24 @@ class _BrandTextFieldState extends State<BrandTextField> {
       cursorColor: _kInputText,
       style: const TextStyle(
         fontFamily: 'HumanBeomseokNeo',
-        fontSize: 15,
+        fontSize: 16,
         color: _kInputText,
+        fontWeight: FontWeight.w700,
+        fontVariations: [FontVariation('wght', 700)],
       ),
       decoration: InputDecoration(
         hintText: widget.hint,
         hintStyle: const TextStyle(
           fontFamily: 'HumanBeomseokNeo',
-          fontSize: 15,
+          fontSize: 16,
           color: _kHint,
+          fontWeight: FontWeight.w700,
+          fontVariations: [FontVariation('wght', 700)],
         ),
         filled: true,
         fillColor: focused ? _kInputFillFocused : _kInputFill,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         border: _border(Colors.transparent),
         enabledBorder: _border(Colors.transparent),
         focusedBorder: _border(_kInputText),
@@ -184,9 +189,9 @@ class PrimaryButton extends StatelessWidget {
       height: 54,
       child: Material(
         color: enabled ? _kFillActive : _kFillDisabled,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           onTap: enabled ? onTap : null,
           child: Center(
             child: Text(
