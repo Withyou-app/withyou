@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../routes/app_routes.dart';
 import '../services/auth_service.dart';
 
-/// 앱 진입 스플래시.
+/// 앱 진입 스플래시 (Figma: iPhone 14 & 15 Pro - 70 / 535:2971).
 ///
-/// 선형 그라데이션(위 #FFD6DC → 아래 #FFE9D9) 배경 위에 캐릭터+로고(withyou+)를
-/// 올린다. 잠시 보여준 뒤 로그인 상태에 따라 메인 셸 / 로그인으로 전환한다.
+/// 그라데이션(위 #FFD6DC → 아래 #FFE9D9) 위, 흰색 글로우 뒤에
+/// 3캐릭터 일러스트 + withyou+ 로고(Bagel 40px). 잠시 뒤 분기.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -31,6 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -42,35 +43,46 @@ class _SplashScreenState extends State<SplashScreen> {
             colors: [Color(0xFFFFD6DC), Color(0xFFFFE9D9)],
           ),
         ),
-        child: Center(
-          child: FractionallySizedBox(
-            widthFactor: 0.82,
-            child: AspectRatio(
-              aspectRatio: 356 / 343, // 캐릭터+로고 이미지 비율
-              child: Stack(
-                children: [
-                  // 캐릭터 뒤 흰색 글로우(원) — 캐릭터 영역에 맞춰 살짝 위로.
-                  Positioned.fill(
-                    child: Align(
-                      alignment: const Alignment(0, -0.22),
-                      child: FractionallySizedBox(
-                        widthFactor: 1.0,
-                        child: Image.asset(
-                          'assets/brand/splash_glow.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // 캐릭터 3종 + withyou+ 로고.
-                  Image.asset(
-                    'assets/brand/splash.png',
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // 흰색 글로우
+            Image.asset(
+              'assets/brand/splash_glow.png',
+              width: w * 0.62,
+              fit: BoxFit.contain,
             ),
-          ),
+            // 3캐릭터 일러스트 + withyou+ 로고
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/brand/sol5_characters.png',
+                  width: w * 356 / 393,
+                  fit: BoxFit.contain,
+                ),
+                const Text.rich(
+                  TextSpan(
+                    style: TextStyle(
+                      fontFamily: 'BagelFatOne',
+                      fontSize: 40,
+                      height: 1.0,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'withyou',
+                        style: TextStyle(color: Color(0xFFFF8E88)),
+                      ),
+                      TextSpan(
+                        text: '+',
+                        style: TextStyle(color: Color(0xFFFFCD8C)),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
