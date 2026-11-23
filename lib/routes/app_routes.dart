@@ -3,6 +3,19 @@
 class AppRoutes {
   AppRoutes._();
 
+  // 진입 스플래시
+  static const splash = '/splash';
+
+  // 서비스 소개/시작 (솔루션1)
+  static const intro = '/intro';
+
+  // 초대링크 입력 (솔루션2)
+  static const invite = '/invite';
+
+  // 회원가입 아이디/비밀번호 (솔루션3/4 — v2 온보딩)
+  static const signupId = '/signup-id';
+  static const signupPw = '/signup-pw';
+
   // 인증 / 온보딩 (풀스크린, 하단 네비 없음)
   static const login = '/login';
   static const signupEmail = '/signup/email';
