@@ -25,6 +25,9 @@ class AppRoutes {
   static const onboarding1 = '/onboarding/1';
   static const onboarding2 = '/onboarding/2';
 
+  // v2 메인 앱 화면 (Section 2)
+  static const homeV2 = '/v2/home';
+
   // 메인 셸 (하단 네비 유동 활성화) — 탭 인덱스로 진입
   static const shell = '/shell';
 
