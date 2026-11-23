@@ -17,15 +17,25 @@ class DoneScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFCF9),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: hPad),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              const OnboardingHeader(step: 4),
-              const SizedBox(height: 38),
+      body: Stack(
+        children: [
+          // 중앙 캐릭터 일러스트 — 화면 수직 중앙(Figma image25 = 50%).
+          Center(
+            child: Image.asset(
+              'assets/brand/sol5_characters.png',
+              width: size.width * 356 / 393,
+              fit: BoxFit.contain,
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: hPad),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  const OnboardingHeader(step: 4),
+                  const SizedBox(height: 38),
               // 제목: "이제 withyou+를\n이용할 준비가 다 되었어요!"
               // (withyou+는 Bagel 52px, withyou=#FF8E88 / +=흰색)
               const Text.rich(
@@ -74,25 +84,18 @@ class DoneScreen extends StatelessWidget {
                   fontVariations: [FontVariation('wght', 700)],
                 ),
               ),
-              // 중앙 캐릭터 일러스트(3마리).
-              Expanded(
-                child: Center(
-                  child: Image.asset(
-                    'assets/brand/sol5_characters.png',
-                    width: size.width * 356 / 393,
-                    fit: BoxFit.contain,
+                  const Spacer(),
+                  PrimaryButton(
+                    label: '완료',
+                    enabled: true,
+                    onTap: () => _done(context),
                   ),
-                ),
+                  SizedBox(height: size.height * 0.03),
+                ],
               ),
-              PrimaryButton(
-                label: '완료',
-                enabled: true,
-                onTap: () => _done(context),
-              ),
-              SizedBox(height: size.height * 0.03),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
