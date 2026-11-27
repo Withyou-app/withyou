@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../routes/app_routes.dart';
+import '../../services/report_store.dart';
 import '../../widgets/v2_bottom_nav.dart';
 
 /// 리포트 목록 화면 (Figma: iPhone 14 & 15 Pro - 94 / 873:1581).
@@ -11,6 +12,12 @@ class ReportListV2Screen extends StatelessWidget {
 
   static const _brown = Color(0xFF90796A);
   static const _gray = Color(0xFFC4A4A4);
+
+  /// createdAt('2026-07-22 13:05' | '2026.08.08') → 'YYYY.MM.DD'.
+  static String _dateLabel(String createdAt) =>
+      createdAt.length >= 10
+          ? createdAt.substring(0, 10).replaceAll('-', '.')
+          : createdAt;
 
   @override
   Widget build(BuildContext context) {
@@ -34,20 +41,48 @@ class ReportListV2Screen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                itemCount: 6,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, __) => GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => Navigator.of(context)
-                      .pushNamed(AppRoutes.reportDetailV2),
-                  child: const _ReportCard(
-                    title: '대화 제목',
-                    summary: '대화 내용 요약',
-                    date: '2026.08.08',
-                  ),
-                ),
+              child: ListenableBuilder(
+                listenable: ReportStore.instance,
+                builder: (context, _) {
+                  final reports = ReportStore.instance.reports;
+                  // 저장된 리포트가 없으면(데모) 샘플을 보여준다.
+                  if (reports.isEmpty) {
+                    return ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                      itemCount: 6,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, __) => GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => Navigator.of(context)
+                            .pushNamed(AppRoutes.reportDetailV2),
+                        child: const _ReportCard(
+                          title: '대화 제목',
+                          summary: '대화 내용 요약',
+                          date: '2026.08.08',
+                        ),
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                    itemCount: reports.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (context, i) {
+                      final r = reports[i];
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => Navigator.of(context).pushNamed(
+                            AppRoutes.reportDetailV2,
+                            arguments: r),
+                        child: _ReportCard(
+                          title: r.title,
+                          summary: r.summary.isEmpty ? '대화 요약' : r.summary,
+                          date: _dateLabel(r.createdAt),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
             V2BottomNav(

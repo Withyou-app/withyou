@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../models/mind_report.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/v2_bottom_nav.dart';
 
@@ -27,6 +28,15 @@ class ReportDetailV2Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 리포트 목록/대화 종료에서 넘어온 실제 리포트(없으면 샘플 표시).
+    final report = ModalRoute.of(context)?.settings.arguments as MindReport?;
+    final title = report?.title ?? '대화 제목';
+    final emotion = (report != null && report.emotions.isNotEmpty)
+        ? report.emotions.first
+        : _topEmotion;
+    final summary = (report != null && report.summary.isNotEmpty)
+        ? report.summary
+        : '오늘은 일상 속 소소한 즐거움과 만족감을 통해 행복을 느꼈으며, 긍정적이고 활기찬 하루를 보냈다.';
     return Scaffold(
       backgroundColor: _bg,
       body: SafeArea(
@@ -47,9 +57,9 @@ class ReportDetailV2Screen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     // 대화 제목
-                    const Text(
-                      '대화 제목',
-                      style: TextStyle(
+                    Text(
+                      title,
+                      style: const TextStyle(
                         fontFamily: 'HumanBeomseokNeo',
                         fontSize: 24,
                         color: _brown,
@@ -67,17 +77,17 @@ class ReportDetailV2Screen extends StatelessWidget {
                           height: 156,
                           child: _EmotionDonut(
                             percent: _topPercent,
-                            label: _topEmotion,
+                            label: emotion,
                           ),
                         ),
                         const SizedBox(width: 20),
-                        const Expanded(
+                        Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(top: 36),
+                            padding: const EdgeInsets.only(top: 36),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   '요약',
                                   style: TextStyle(
                                     fontFamily: 'HumanBeomseokNeo',
@@ -87,11 +97,10 @@ class ReportDetailV2Screen extends StatelessWidget {
                                     fontVariations: [FontVariation('wght', 700)],
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Text(
-                                  '오늘은 일상 속 소소한 즐거움과 만족감을 통해 '
-                                  '행복을 느꼈으며, 긍정적이고 활기찬 하루를 보냈다.',
-                                  style: TextStyle(
+                                  summary,
+                                  style: const TextStyle(
                                     fontFamily: 'HumanBeomseokNeo',
                                     fontSize: 12,
                                     height: 1.45,

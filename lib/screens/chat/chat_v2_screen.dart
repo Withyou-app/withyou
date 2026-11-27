@@ -3,6 +3,7 @@ import '../../models/gift_v2.dart';
 import '../../routes/app_routes.dart';
 import '../../services/ai/ai_service.dart';
 import '../../services/ai/ai_types.dart';
+import '../../services/report_store.dart';
 
 /// v2 채팅 화면 (Figma: iPhone 14 & 15 Pro - 86 / 767:691).
 ///
@@ -34,6 +35,7 @@ class _ChatV2ScreenState extends State<ChatV2Screen> {
   final List<AiMessage> _history = []; // AI 전달용
   final List<_Msg> _msgs = []; // 화면 표시용
   bool _sending = false;
+  bool _ending = false;
   bool _seeded = false;
   String _persona = '고미';
   final int _credit = 16; // 표시용(실제 차감은 백엔드)
@@ -99,6 +101,36 @@ class _ChatV2ScreenState extends State<ChatV2Screen> {
     _scrollToBottom();
   }
 
+  /// 뒤로가기: 사용자가 대화한 적 있으면 마음 리포트를 생성·저장하고 상세로 이동,
+  /// 아니면 그냥 닫는다. (세션 완료 시 리포트 — 스펙 §4)
+  Future<void> _onBack() async {
+    if (_ending) return;
+    final hasUserMsg = _history.any((m) => m.role == AiRole.user);
+    if (!hasUserMsg) {
+      Navigator.of(context).maybePop();
+      return;
+    }
+    setState(() => _ending = true);
+    try {
+      final now = DateTime.now();
+      String two(int n) => n.toString().padLeft(2, '0');
+      final createdAt = '${now.year}.${two(now.month)}.${two(now.day)}';
+      final report = await AiService.instance.generateReport(
+        persona: _persona,
+        history: _history,
+        createdAt: createdAt,
+      );
+      await ReportStore.instance.add(report);
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed(
+        AppRoutes.reportDetailV2,
+        arguments: report,
+      );
+    } catch (_) {
+      if (mounted) Navigator.of(context).maybePop();
+    }
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scroll.hasClients) {
@@ -131,7 +163,7 @@ class _ChatV2ScreenState extends State<ChatV2Screen> {
                       children: [
                         GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: () => Navigator.of(context).maybePop(),
+                          onTap: _onBack,
                           child: Image.asset('assets/brand/back_icon.png',
                               width: 32, height: 32),
                         ),
