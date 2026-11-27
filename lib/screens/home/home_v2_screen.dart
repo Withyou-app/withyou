@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../routes/app_routes.dart';
+import '../../widgets/v2_bottom_nav.dart';
 
 /// v2 홈 화면 (Figma: iPhone 14 & 15 Pro - 88 / 817:1511).
 ///
@@ -12,7 +13,6 @@ class HomeV2Screen extends StatelessWidget {
   static const _main = Color(0xFFFF8E88);
   static const _point = Color(0xFFFFCD8C);
   static const _cardBg = Color(0xFFFFEBEB);
-  static const _navInactive = Color(0xFFC7B9B0);
   static const _msgGray = Color(0xFFC4A4A4);
 
   @override
@@ -154,7 +154,14 @@ class HomeV2Screen extends StatelessWidget {
                   ),
                 ),
               ),
-              const _BottomNav(current: 0),
+              V2BottomNav(
+                current: 0,
+                onTap: (i) {
+                  if (i == 1) {
+                    Navigator.of(context).pushNamed(AppRoutes.chatListV2);
+                  }
+                },
+              ),
             ],
           ),
             ),
@@ -268,55 +275,6 @@ class _ConvCard extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.current});
-  final int current;
-
-  static const _items = [
-    (Icons.home_rounded, '홈'),
-    (Icons.chat_bubble_outline, '채팅'),
-    (Icons.article_outlined, '리포트'),
-    (Icons.card_giftcard, '선물'),
-    (Icons.person_outline, '마이'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 73,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          for (var i = 0; i < _items.length; i++)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  _items[i].$1,
-                  size: 28,
-                  color: i == current ? HomeV2Screen._main : HomeV2Screen._navInactive,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  _items[i].$2,
-                  style: TextStyle(
-                    fontFamily: 'HumanBeomseokNeo',
-                    fontSize: 14,
-                    color: i == current ? HomeV2Screen._main : HomeV2Screen._navInactive,
-                    fontWeight: FontWeight.w700,
-                    fontVariations: const [FontVariation('wght', 700)],
-                  ),
-                ),
-              ],
-            ),
         ],
       ),
     );
