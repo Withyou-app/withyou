@@ -38,10 +38,15 @@ class ReportListV2Screen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                 itemCount: 6,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (_, __) => const _ReportCard(
-                  title: '대화 제목',
-                  summary: '대화 내용 요약',
-                  date: '2026.08.08',
+                itemBuilder: (context, __) => GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(AppRoutes.reportDetailV2),
+                  child: const _ReportCard(
+                    title: '대화 제목',
+                    summary: '대화 내용 요약',
+                    date: '2026.08.08',
+                  ),
                 ),
               ),
             ),

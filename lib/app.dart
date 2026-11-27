@@ -14,6 +14,7 @@ import 'screens/chat/chat_list_v2_screen.dart';
 import 'screens/report/report_list_v2_screen.dart';
 import 'screens/gift/gift_v2_screen.dart';
 import 'screens/mypage/mypage_v2_screen.dart';
+import 'screens/report/report_detail_v2_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/auth/signup_email_screen.dart';
@@ -63,6 +64,7 @@ class WithYouApp extends StatelessWidget {
         AppRoutes.reportListV2: (_) => const ReportListV2Screen(),
         AppRoutes.giftV2: (_) => const GiftV2Screen(),
         AppRoutes.mypageV2: (_) => const MypageV2Screen(),
+        AppRoutes.reportDetailV2: (_) => const ReportDetailV2Screen(),
         AppRoutes.login: (_) => const LoginScreen(),
         AppRoutes.signupEmail: (_) => const SignupEmailScreen(),
         AppRoutes.signupPassword: (_) => const SignupPasswordScreen(),
