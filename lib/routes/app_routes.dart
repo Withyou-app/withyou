@@ -3,6 +3,20 @@
 class AppRoutes {
   AppRoutes._();
 
+  // 진입 스플래시
+  static const splash = '/splash';
+
+  // 서비스 소개/시작 (솔루션1)
+  static const intro = '/intro';
+
+  // 초대링크 입력 (솔루션2)
+  static const invite = '/invite';
+
+  // 회원가입 아이디/비밀번호/완료 (솔루션3/4/5 — v2 온보딩)
+  static const signupId = '/signup-id';
+  static const signupPw = '/signup-pw';
+  static const signupDone = '/signup-done';
+
   // 인증 / 온보딩 (풀스크린, 하단 네비 없음)
   static const login = '/login';
   static const signupEmail = '/signup/email';
@@ -10,6 +24,18 @@ class AppRoutes {
   static const signupTerms = '/signup/terms';
   static const onboarding1 = '/onboarding/1';
   static const onboarding2 = '/onboarding/2';
+
+  // v2 메인 앱 화면 (Section 2)
+  static const homeV2 = '/v2/home';
+  static const personaSelect = '/v2/persona';
+  static const chatV2 = '/v2/chat';
+  static const chatListV2 = '/v2/chat-list';
+  static const reportListV2 = '/v2/report-list';
+  static const giftV2 = '/v2/gift';
+  static const mypageV2 = '/v2/mypage';
+  static const reportDetailV2 = '/v2/report-detail';
+  static const giftPurchaseV2 = '/v2/gift-purchase';
+  static const giftReceivedV2 = '/v2/gift-received';
 
   // 메인 셸 (하단 네비 유동 활성화) — 탭 인덱스로 진입
   static const shell = '/shell';
