@@ -22,6 +22,9 @@ class _ChatListV2ScreenState extends State<ChatListV2Screen> {
   static const _filters = ['전체', '구나', '고미', '리미'];
   int _filter = 0;
 
+  // 즐겨찾기(별) 상태 — 대화 인덱스 기준. 별을 탭하면 추가/해제된다.
+  final Set<int> _favorites = {0, 3};
+
   // 임시 목록 데이터. (아바타 에셋은 char_*.png 재사용)
   static const _items = [
     ('리미', 'assets/brand/char_rimi.png', '대화 요약 대화 요약'),
@@ -99,7 +102,15 @@ class _ChatListV2ScreenState extends State<ChatListV2Screen> {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (_, i) {
                   final (name, asset, summary) = _items[i];
-                  return _ConvCard(name: name, asset: asset, summary: summary);
+                  return _ConvCard(
+                    name: name,
+                    asset: asset,
+                    summary: summary,
+                    favorited: _favorites.contains(i),
+                    onToggleFavorite: () => setState(() {
+                      if (!_favorites.remove(i)) _favorites.add(i);
+                    }),
+                  );
                 },
               ),
             ),
@@ -129,11 +140,18 @@ class _ChatListV2ScreenState extends State<ChatListV2Screen> {
 }
 
 class _ConvCard extends StatelessWidget {
-  const _ConvCard(
-      {required this.name, required this.asset, required this.summary});
+  const _ConvCard({
+    required this.name,
+    required this.asset,
+    required this.summary,
+    required this.favorited,
+    required this.onToggleFavorite,
+  });
   final String name;
   final String asset;
   final String summary;
+  final bool favorited;
+  final VoidCallback onToggleFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +218,20 @@ class _ConvCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.star_rounded, size: 19, color: Color(0xFFFFCD8C)),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onToggleFavorite,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                favorited ? Icons.star_rounded : Icons.star_outline_rounded,
+                size: 20,
+                color: favorited
+                    ? const Color(0xFFFFCD8C)
+                    : const Color(0xFFD6C3B4),
+              ),
+            ),
+          ),
         ],
       ),
     );
