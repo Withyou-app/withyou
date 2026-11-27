@@ -72,13 +72,18 @@ class _GiftV2ScreenState extends State<GiftV2Screen> {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                 itemCount: _products.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
-                itemBuilder: (_, i) => _ProductCard(
-                  product: _products[i],
-                  qty: _qty[i],
-                  onMinus: () => setState(() {
-                    if (_qty[i] > 1) _qty[i]--;
-                  }),
-                  onPlus: () => setState(() => _qty[i]++),
+                itemBuilder: (_, i) => GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(AppRoutes.giftPurchaseV2),
+                  child: _ProductCard(
+                    product: _products[i],
+                    qty: _qty[i],
+                    onMinus: () => setState(() {
+                      if (_qty[i] > 1) _qty[i]--;
+                    }),
+                    onPlus: () => setState(() => _qty[i]++),
+                  ),
                 ),
               ),
             ),
