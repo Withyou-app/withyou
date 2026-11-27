@@ -54,6 +54,9 @@ class ReportListV2Screen extends StatelessWidget {
                 } else if (i == 1) {
                   Navigator.of(context)
                       .pushReplacementNamed(AppRoutes.chatListV2);
+                } else if (i == 3) {
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.giftV2);
                 }
               },
             ),
