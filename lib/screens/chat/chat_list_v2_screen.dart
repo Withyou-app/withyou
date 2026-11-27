@@ -155,7 +155,18 @@ class _ConvCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             clipBehavior: Clip.antiAlias,
-            child: Image.asset(asset, fit: BoxFit.cover),
+            // 구나 원본은 세로로 꽉 찬(여백 없는) 프레임이라 cover 시 과하게 커 보이고
+            // 얼굴만 크게 잘린다. → 구나는 contain 으로 전체를 보여주되, 위 더듬이가
+            // 세로를 먹는 만큼 여백을 적게 줘 몸통 크기를 다른 캐릭터와 맞춘다.
+            child: Padding(
+              padding: EdgeInsets.all(asset.contains('char_guna') ? 3 : 0),
+              child: Image.asset(
+                asset,
+                fit: asset.contains('char_guna')
+                    ? BoxFit.contain
+                    : BoxFit.cover,
+              ),
+            ),
           ),
           const SizedBox(width: 11),
           Expanded(
