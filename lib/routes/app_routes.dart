@@ -30,6 +30,7 @@ class AppRoutes {
   static const personaSelect = '/v2/persona';
   static const chatV2 = '/v2/chat';
   static const chatListV2 = '/v2/chat-list';
+  static const reportListV2 = '/v2/report-list';
 
   // 메인 셸 (하단 네비 유동 활성화) — 탭 인덱스로 진입
   static const shell = '/shell';

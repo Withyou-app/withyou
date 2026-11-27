@@ -109,6 +109,9 @@ class _ChatListV2ScreenState extends State<ChatListV2Screen> {
                 if (i == 0) {
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil(AppRoutes.homeV2, (r) => false);
+                } else if (i == 2) {
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.reportListV2);
                 }
               },
             ),

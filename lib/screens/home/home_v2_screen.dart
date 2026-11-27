@@ -159,6 +159,8 @@ class HomeV2Screen extends StatelessWidget {
                 onTap: (i) {
                   if (i == 1) {
                     Navigator.of(context).pushNamed(AppRoutes.chatListV2);
+                  } else if (i == 2) {
+                    Navigator.of(context).pushNamed(AppRoutes.reportListV2);
                   }
                 },
               ),
