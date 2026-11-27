@@ -163,6 +163,8 @@ class HomeV2Screen extends StatelessWidget {
                     Navigator.of(context).pushNamed(AppRoutes.reportListV2);
                   } else if (i == 3) {
                     Navigator.of(context).pushNamed(AppRoutes.giftV2);
+                  } else if (i == 4) {
+                    Navigator.of(context).pushNamed(AppRoutes.mypageV2);
                   }
                 },
               ),

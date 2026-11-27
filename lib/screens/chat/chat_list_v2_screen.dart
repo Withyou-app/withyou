@@ -115,6 +115,9 @@ class _ChatListV2ScreenState extends State<ChatListV2Screen> {
                 } else if (i == 3) {
                   Navigator.of(context)
                       .pushReplacementNamed(AppRoutes.giftV2);
+                } else if (i == 4) {
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.mypageV2);
                 }
               },
             ),

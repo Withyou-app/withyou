@@ -98,6 +98,10 @@ class _GiftV2ScreenState extends State<GiftV2Screen> {
                     Navigator.of(context)
                         .pushReplacementNamed(AppRoutes.reportListV2);
                     break;
+                  case 4:
+                    Navigator.of(context)
+                        .pushReplacementNamed(AppRoutes.mypageV2);
+                    break;
                 }
               },
             ),
