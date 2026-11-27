@@ -28,14 +28,14 @@ class _PersonaSelectV2ScreenState extends State<PersonaSelectV2Screen> {
   static const _descColor = Color(0xFFC4A07E);
   static const _underline = Color(0xFFFEECD3);
 
-  // 고미 설명은 Figma 원문. 구나/리미는 유형에 맞춘 안내문.
+  // 스펙 기준 유형: 구나=공감형, 고미=현실형, 리미=복합형.
   static const _personas = [
     _Persona('구나', '공감형', 'assets/brand/char_guna.png',
         '공감형인 구나는\nID님의 마음을 먼저\n따뜻하게 안아줘요.'),
-    _Persona('고미', '복합형', 'assets/brand/char_gomi.png',
-        '복합형인 고미는\nID님에게 공감과 현실적인\n접근을 함께 제공해요.'),
-    _Persona('리미', '현실형', 'assets/brand/char_rimi.png',
-        '현실형인 리미는\nID님에게 지금 필요한 것을\n분명하게 짚어줘요.'),
+    _Persona('고미', '현실형', 'assets/brand/char_gomi.png',
+        '현실형인 고미는\nID님에게 지금 필요한 것을\n분명하게 짚어줘요.'),
+    _Persona('리미', '복합형', 'assets/brand/char_rimi.png',
+        '복합형인 리미는\nID님에게 공감과 현실적인\n접근을 함께 제공해요.'),
   ];
 
   int _index = 1; // 고미부터(Figma 기준)

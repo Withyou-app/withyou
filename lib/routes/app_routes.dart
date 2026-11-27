@@ -35,6 +35,7 @@ class AppRoutes {
   static const mypageV2 = '/v2/mypage';
   static const reportDetailV2 = '/v2/report-detail';
   static const giftPurchaseV2 = '/v2/gift-purchase';
+  static const giftReceivedV2 = '/v2/gift-received';
 
   // 메인 셸 (하단 네비 유동 활성화) — 탭 인덱스로 진입
   static const shell = '/shell';

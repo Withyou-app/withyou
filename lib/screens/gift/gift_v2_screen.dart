@@ -26,12 +26,31 @@ class _GiftV2ScreenState extends State<GiftV2Screen> {
   // 보유 크레딧 (스펙상 Credit 소유주는 기업, 여기선 표시값만 임시).
   static const _ownedCredit = 16;
 
-  // 임시 상품 목록. asset 이 null 이면 placeholder 박스를 표시한다.
-  // (상품 링크/사진은 추후 제공 → asset 경로만 채우면 됨)
-  static final List<_Product> _products = [
-    const _Product('누드빼빼로', '누드빼빼로 설명 글', 4000, asset: null),
-    const _Product('누드빼빼로', '누드빼빼로 설명 글', 4000, asset: null),
-    const _Product('누드빼빼로', '누드빼빼로 설명 글', 4000, asset: null),
+  // 실제 상품 목록(사용자 제공 링크). 사진은 assets/gifts/<파일명> 에 넣으면
+  // 자동 표시, 없으면 상품명 placeholder 박스가 뜬다.
+  // credit 값은 임시(≈가격/550) — 실제 가격 확정 시 교체 필요.
+  // ※ 초콜릿은 보류(추후 제공).
+  static const _products = [
+    _Product('핫초코', '달콤한 핫초코', 9, 'assets/gifts/hotchoco.png',
+        'https://m.lottesweetmall.com/product/detail.html?product_no=60'),
+    _Product('디카페인 티백', '부담 없는 디카페인 티', 16,
+        'assets/gifts/decaf_tea.png', 'https://www.imarket.co.kr/p/FD0906'),
+    _Product('드립백 커피', '향 좋은 드립백 커피', 18,
+        'assets/gifts/dripbag_coffee.png',
+        'https://www.somesomemilmil.com/shop_view/?idx=118'),
+    _Product('쿠키', '바삭한 쿠키', 15, 'assets/gifts/cookie.png',
+        'https://www.ssg.com/item/itemView.ssg?itemId=1000529666055'),
+    _Product('견과류', '고소한 견과류', 22, 'assets/gifts/nuts.png',
+        'https://m.nutsholic.co.kr/product/오리지널/907/'),
+    _Product('메모지', '아이디어 메모지', 5, 'assets/gifts/memo_pad.png',
+        'https://www.alpha.co.kr/product/productView.do?productCode=2192434'),
+    _Product('키링', '귀여운 키링', 15, 'assets/gifts/keyring.png',
+        'https://www.10x10.co.kr/shopping/category_prd.asp?itemid=5076674'),
+    _Product('손목 보호대', '편안한 손목 보호대', 18,
+        'assets/gifts/wrist_guard.png',
+        'https://gglindaclip.cafe24.com/m/product/detail.html?product_no=22'),
+    _Product('핫팩', '따뜻한 핫팩', 4, 'assets/gifts/hot_pack.png',
+        'https://www.designever.co.kr/goods/goods_view.php?goodsNo=1210755011'),
   ];
 
   // 상품별 선택 수량.
@@ -164,11 +183,12 @@ class _CreditBadge extends StatelessWidget {
 }
 
 class _Product {
-  const _Product(this.name, this.desc, this.credit, {this.asset});
+  const _Product(this.name, this.desc, this.credit, this.asset, this.url);
   final String name;
   final String desc;
   final int credit;
-  final String? asset;
+  final String asset; // assets/gifts/<파일>.png (없으면 placeholder)
+  final String url; // 상품 상세/구매 링크
 }
 
 class _ProductCard extends StatelessWidget {
@@ -270,15 +290,39 @@ class _ProductCard extends StatelessWidget {
   }
 }
 
-/// 상품 사진 placeholder (148×148). asset 이 있으면 이미지, 없으면 설명 박스.
+/// 상품 사진 (148×148). asset(assets/gifts/<파일>.png) 이 있으면 이미지,
+/// 아직 없으면 상품명 placeholder 박스. → 해당 경로에 사진을 넣으면 자동 표시.
 class _ProductImage extends StatelessWidget {
   const _ProductImage({required this.asset, required this.label});
-  final String? asset;
+  final String asset;
   final String label;
+
+  Widget _placeholder() => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.image_outlined, size: 28, color: Color(0xFFD4BBA9)),
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'HumanBeomseokNeo',
+                  fontSize: 12,
+                  color: Color(0xFFBBA089),
+                  fontWeight: FontWeight.w700,
+                  fontVariations: [FontVariation('wght', 700)],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
-    final a = asset;
     return Container(
       width: 148,
       height: 148,
@@ -287,28 +331,11 @@ class _ProductImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       clipBehavior: Clip.antiAlias,
-      child: a != null
-          ? Image.asset(a, fit: BoxFit.cover)
-          : Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.image_outlined,
-                      size: 30, color: Color(0xFFD4BBA9)),
-                  SizedBox(height: 6),
-                  Text(
-                    '상품 사진',
-                    style: TextStyle(
-                      fontFamily: 'HumanBeomseokNeo',
-                      fontSize: 12,
-                      color: Color(0xFFD4BBA9),
-                      fontWeight: FontWeight.w700,
-                      fontVariations: [FontVariation('wght', 700)],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      child: Image.asset(
+        asset,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      ),
     );
   }
 }
