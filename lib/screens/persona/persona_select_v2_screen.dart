@@ -114,8 +114,8 @@ class _PersonaSelectV2ScreenState extends State<PersonaSelectV2Screen> {
                   borderRadius: BorderRadius.circular(12),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
-                    onTap: () =>
-                        Navigator.of(context).pushNamed(AppRoutes.chatV2),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(AppRoutes.chatV2, arguments: p.name),
                     child: const Center(
                       child: Text(
                         '대화하기',

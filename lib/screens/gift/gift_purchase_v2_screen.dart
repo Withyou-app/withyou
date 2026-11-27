@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../routes/app_routes.dart';
+import '../../models/gift_v2.dart';
 
 /// v2 선물 구매(상세) 화면 (Figma: iPhone 14 & 15 Pro - 96 / 899:2042).
 ///
@@ -28,6 +28,10 @@ class _GiftPurchaseV2ScreenState extends State<GiftPurchaseV2Screen> {
 
   @override
   Widget build(BuildContext context) {
+    // 선물 목록에서 넘어온 상품(없으면 첫 상품으로 폴백).
+    final product =
+        (ModalRoute.of(context)?.settings.arguments as GiftV2?) ??
+            kGiftsV2.first;
     return Scaffold(
       backgroundColor: _bg,
       body: SafeArea(
@@ -68,9 +72,10 @@ class _GiftPurchaseV2ScreenState extends State<GiftPurchaseV2Screen> {
                   children: [
                     // 상품 카드
                     _ProductCard(
-                      name: '누드빼빼로',
-                      desc: '누드빼빼로 설명 글',
-                      credit: 4000,
+                      name: product.name,
+                      desc: product.desc,
+                      credit: product.credit,
+                      asset: product.asset,
                       qty: _qty,
                       onMinus: () =>
                           setState(() => _qty > 1 ? _qty-- : null),
@@ -184,6 +189,7 @@ class _ProductCard extends StatelessWidget {
     required this.name,
     required this.desc,
     required this.credit,
+    required this.asset,
     required this.qty,
     required this.onMinus,
     required this.onPlus,
@@ -191,6 +197,7 @@ class _ProductCard extends StatelessWidget {
   final String name;
   final String desc;
   final int credit;
+  final String asset;
   final int qty;
   final VoidCallback onMinus;
   final VoidCallback onPlus;
@@ -219,7 +226,7 @@ class _ProductCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 상품 이미지 placeholder
+          // 상품 이미지 (asset 있으면 표시, 없으면 상품명 placeholder)
           Container(
             width: 148,
             height: 148,
@@ -227,23 +234,34 @@ class _ProductCard extends StatelessWidget {
               color: const Color(0xFFF7EFE7),
               borderRadius: BorderRadius.circular(12),
             ),
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(Icons.image_outlined, size: 30, color: Color(0xFFD4BBA9)),
-                SizedBox(height: 6),
-                Text(
-                  '상품 사진',
-                  style: TextStyle(
-                    fontFamily: 'HumanBeomseokNeo',
-                    fontSize: 12,
-                    color: Color(0xFFD4BBA9),
-                    fontWeight: FontWeight.w700,
-                    fontVariations: [FontVariation('wght', 700)],
-                  ),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(
+              asset,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.image_outlined,
+                        size: 30, color: Color(0xFFD4BBA9)),
+                    const SizedBox(height: 6),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Text(
+                        name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: 'HumanBeomseokNeo',
+                          fontSize: 12,
+                          color: Color(0xFFBBA089),
+                          fontWeight: FontWeight.w700,
+                          fontVariations: [FontVariation('wght', 700)],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           const SizedBox(width: 14),

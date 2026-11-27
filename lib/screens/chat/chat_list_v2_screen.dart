@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/v2_bottom_nav.dart';
 
@@ -22,8 +23,41 @@ class _ChatListV2ScreenState extends State<ChatListV2Screen> {
   static const _filters = ['전체', '구나', '고미', '리미'];
   int _filter = 0;
 
-  // 즐겨찾기(별) 상태 — 대화 인덱스 기준. 별을 탭하면 추가/해제된다.
-  final Set<int> _favorites = {0, 3};
+  // 즐겨찾기(별) 상태 — 대화 인덱스 기준. 별 탭으로 추가/해제, 로컬에 영구 저장.
+  static const _favKey = 'v2_chat_favorites';
+  final Set<int> _favorites = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList(_favKey);
+    if (!mounted) return;
+    setState(() {
+      _favorites
+        ..clear()
+        ..addAll(saved == null
+            ? const {0, 3} // 최초 기본값
+            : saved.map(int.tryParse).whereType<int>());
+    });
+  }
+
+  Future<void> _saveFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+        _favKey, _favorites.map((e) => '$e').toList());
+  }
+
+  void _toggleFavorite(int i) {
+    setState(() {
+      if (!_favorites.remove(i)) _favorites.add(i);
+    });
+    _saveFavorites();
+  }
 
   // 임시 목록 데이터. (아바타 에셋은 char_*.png 재사용)
   static const _items = [
@@ -107,9 +141,7 @@ class _ChatListV2ScreenState extends State<ChatListV2Screen> {
                     asset: asset,
                     summary: summary,
                     favorited: _favorites.contains(i),
-                    onToggleFavorite: () => setState(() {
-                      if (!_favorites.remove(i)) _favorites.add(i);
-                    }),
+                    onToggleFavorite: () => _toggleFavorite(i),
                   );
                 },
               ),

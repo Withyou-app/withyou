@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/gift_v2.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/v2_bottom_nav.dart';
 
@@ -26,92 +27,8 @@ class _GiftV2ScreenState extends State<GiftV2Screen> {
   // 보유 크레딧 (스펙상 Credit 소유주는 기업, 여기선 표시값만 임시).
   static const _ownedCredit = 16;
 
-  // 실제 상품 목록(사용자 제공 링크). 사진은 assets/gifts/<파일명> 에 넣으면
-  // 자동 표시, 없으면 상품명 placeholder 박스가 뜬다.
-  // 카드엔 감성 한 줄(tagline)을 노출, 상세 설명(desc)은 구매/상세에서 사용.
-  // ※ 핫초코 링크 미확보(기존 product_no=60 은 초콜릿이었음) — 링크 필요.
-  static const _products = [
-    _Product(
-      name: '핫초코',
-      credit: 9,
-      tagline: '오늘 달콤한 한잔의 여유는 어떨까요?',
-      desc: '뜨거운 물이나 우유에 타서 마시는 스틱형 핫초코예요.',
-      asset: 'assets/gifts/hotchoco.png',
-      url: '', // TODO: 핫초코 실제 구매 링크 필요
-    ),
-    _Product(
-      name: '디카페인 티백',
-      credit: 9,
-      tagline: '은은한 향과 함께 짐들을 잠시 내려놓아볼까요?',
-      desc: '카페인 없이 우려 마시는 캐모마일 허브차 티백이에요.',
-      asset: 'assets/gifts/decaf_tea.png',
-      url: 'https://www.imarket.co.kr/p/FD0906',
-    ),
-    _Product(
-      name: '드립백 커피',
-      credit: 10,
-      tagline: '커피한잔의 여유를 보내봐요',
-      desc: '컵에 걸고 뜨거운 물을 부어 내리는 드립백 커피예요.',
-      asset: 'assets/gifts/dripbag_coffee.png',
-      url: 'https://www.somesomemilmil.com/shop_view/?idx=118',
-    ),
-    _Product(
-      name: '쿠키',
-      credit: 4,
-      tagline: '바삭한 한입과 함께 잠시 쉬어가요',
-      desc: '캐러멜과 시나몬 풍미의 바삭한 로투스 비스코프예요.',
-      asset: 'assets/gifts/cookie.png',
-      url: 'https://www.ssg.com/item/itemView.ssg?itemId=1000529666055',
-    ),
-    _Product(
-      name: '초콜릿',
-      credit: 3,
-      tagline: '열심히 한 하루에 달콤한 선물',
-      desc: '부드러운 우유 맛의 가나 마일드 초콜릿이에요.',
-      asset: 'assets/gifts/chocolate.png',
-      url: 'https://m.lottesweetmall.com/product/%EA%B0%80%EB%82%98-%EB%A7%88%EC%9D%BC%EB%93%9C-34g/60/category/77/display/1/',
-    ),
-    _Product(
-      name: '견과류',
-      credit: 12,
-      tagline: '바쁜 하루에도 날 챙기는 루틴',
-      desc: '견과류와 건포도를 한 봉씩 담은 하루견과예요.',
-      asset: 'assets/gifts/nuts.png',
-      url: 'https://m.nutsholic.co.kr/product/오리지널/907/',
-    ),
-    _Product(
-      name: '메모지',
-      credit: 5,
-      tagline: '당신의 시선에서 언제든 기억될 수 있게',
-      desc: '짧은 메모나 페이지 표시에 사용하는 메모지예요.',
-      asset: 'assets/gifts/memo_pad.png',
-      url: 'https://www.alpha.co.kr/product/productView.do?productCode=2192434',
-    ),
-    _Product(
-      name: '키링',
-      credit: 5,
-      tagline: '평범했던 하루를 작은 친구와 함께',
-      desc: '가방이나 열쇠에 달아 사용하는 아크릴 키링이에요.',
-      asset: 'assets/gifts/keyring.png',
-      url: 'https://www.10x10.co.kr/shopping/category_prd.asp?itemid=5076674',
-    ),
-    _Product(
-      name: '손목 보호대',
-      credit: 6,
-      tagline: '오늘도 고생 많았어요',
-      desc: '손목을 감싸 보호하는 손목보호대예요.',
-      asset: 'assets/gifts/wrist_guard.png',
-      url: 'https://gglindaclip.cafe24.com/m/product/detail.html?product_no=22',
-    ),
-    _Product(
-      name: '핫팩',
-      credit: 4,
-      tagline: '추운 출근길, 작은 온기를 챙겨가요',
-      desc: '주머니에 넣어 손을 데우는 미니 일회용 핫팩이에요.',
-      asset: 'assets/gifts/hot_pack.png',
-      url: 'https://www.designever.co.kr/goods/goods_view.php?goodsNo=1210755011',
-    ),
-  ];
+  // 선물 카탈로그는 공용 모델(kGiftsV2)을 단일 소스로 참조.
+  static const List<GiftV2> _products = kGiftsV2;
 
   // 상품별 선택 수량.
   late final List<int> _qty = List<int>.filled(_products.length, 1);
@@ -153,8 +70,9 @@ class _GiftV2ScreenState extends State<GiftV2Screen> {
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
                 itemBuilder: (_, i) => GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => Navigator.of(context)
-                      .pushNamed(AppRoutes.giftPurchaseV2),
+                  onTap: () => Navigator.of(context).pushNamed(
+                      AppRoutes.giftPurchaseV2,
+                      arguments: _products[i]),
                   child: _ProductCard(
                     product: _products[i],
                     qty: _qty[i],
@@ -242,23 +160,6 @@ class _CreditBadge extends StatelessWidget {
   }
 }
 
-class _Product {
-  const _Product({
-    required this.name,
-    required this.credit,
-    required this.tagline,
-    required this.desc,
-    required this.asset,
-    required this.url,
-  });
-  final String name;
-  final int credit;
-  final String tagline; // 카드에 노출하는 감성 한 줄
-  final String desc; // 상품 설명(구매/상세용)
-  final String asset; // assets/gifts/<파일>.png (없으면 placeholder)
-  final String url; // 상품 상세/구매 링크
-}
-
 class _ProductCard extends StatelessWidget {
   const _ProductCard({
     required this.product,
@@ -266,15 +167,12 @@ class _ProductCard extends StatelessWidget {
     required this.onMinus,
     required this.onPlus,
   });
-  final _Product product;
+  final GiftV2 product;
   final int qty;
   final VoidCallback onMinus;
   final VoidCallback onPlus;
 
-  String get _priceText => '${product.credit.toString().replaceAllMapped(
-        RegExp(r'(\d)(?=(\d{3})+$)'),
-        (m) => '${m[1]},',
-      )} 크레딧';
+  String get _priceText => product.creditLabel;
 
   @override
   Widget build(BuildContext context) {

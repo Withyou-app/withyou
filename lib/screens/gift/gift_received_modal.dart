@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/gift_v2.dart';
 
 /// 선물 받기 모달 (Figma: iPhone 14 & 15 Pro - 90 / 817:1784).
 ///
@@ -9,11 +10,10 @@ import 'package:flutter/material.dart';
 /// 상품 사진은 미제공이라 placeholder 박스로 비운다. (asset 채우면 교체)
 Future<void> showGiftReceivedModal(
   BuildContext context, {
-  String name = '누드빼빼로',
-  String desc = '뭐 대충 누드빼빼로설명하는글',
-  String? imageAsset,
+  GiftV2? gift,
   VoidCallback? onReceive,
 }) {
+  final g = gift ?? kGiftsV2.first;
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -21,9 +21,9 @@ Future<void> showGiftReceivedModal(
     barrierColor: const Color(0x73000000), // 어두운 오버레이
     transitionDuration: const Duration(milliseconds: 180),
     pageBuilder: (_, __, ___) => _GiftReceivedModal(
-      name: name,
-      desc: desc,
-      imageAsset: imageAsset,
+      name: g.name,
+      desc: g.desc,
+      imageAsset: g.asset,
       onReceive: onReceive,
     ),
     transitionBuilder: (_, anim, __, child) => FadeTransition(
@@ -80,25 +80,12 @@ class _GiftReceivedModal extends StatelessWidget {
                   ),
                   clipBehavior: Clip.antiAlias,
                   alignment: Alignment.center,
-                  child: img != null
-                      ? Image.asset(img, fit: BoxFit.cover)
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.image_outlined,
-                                size: 34, color: Color(0xFFD4BBA9)),
-                            SizedBox(height: 8),
-                            Text(
-                              '상품 사진',
-                              style: TextStyle(
-                                fontFamily: 'HumanBeomseokNeo',
-                                fontSize: 13,
-                                color: Color(0xFFD4BBA9),
-                                fontWeight: FontWeight.w700,
-                                fontVariations: [FontVariation('wght', 700)],
-                              ),
-                            ),
-                          ],
+                  child: img == null
+                      ? _imgPlaceholder(name)
+                      : Image.asset(
+                          img,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _imgPlaceholder(name),
                         ),
                 ),
                 const SizedBox(height: 16),
@@ -174,3 +161,28 @@ class _GiftReceivedModal extends StatelessWidget {
     );
   }
 }
+
+/// 상품 사진이 아직 없을 때 상품명을 보여주는 placeholder.
+Widget _imgPlaceholder(String label) => Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.image_outlined, size: 34, color: Color(0xFFD4BBA9)),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'HumanBeomseokNeo',
+                fontSize: 13,
+                color: Color(0xFFBBA089),
+                fontWeight: FontWeight.w700,
+                fontVariations: [FontVariation('wght', 700)],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
